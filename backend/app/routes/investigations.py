@@ -1,6 +1,8 @@
 import os
 import uuid
 import json
+import hashlib
+from collections import defaultdict
 from datetime import datetime, timezone
 from typing import List, Optional
 from fastapi import APIRouter, Depends, HTTPException, Header, Query
@@ -139,6 +141,7 @@ def get_investigation_graph(
     edges: List[GraphEdge] = []
     seen_nodes = set()
     seen_edges = set()
+    entity_investigations = defaultdict(list)
 
     for item in items:
         inv_node_id = f"inv-{item.id[:8]}"
@@ -154,7 +157,10 @@ def get_investigation_graph(
         # Add entity nodes and edges
         if item.entities:
             for ent in item.entities:
-                ent_node_id = f"ent-{ent['id']}"
+                val_hash = hashlib.md5(ent["value"].encode("utf-8")).hexdigest()[:8]
+                ent_node_id = f"ent-{ent['type']}-{val_hash}"
+                entity_investigations[ent_node_id].append(inv_node_id)
+
                 if ent_node_id not in seen_nodes:
                     seen_nodes.add(ent_node_id)
                     nodes.append(GraphNode(
@@ -174,6 +180,24 @@ def get_investigation_graph(
                         label="CONTAINS",
                         type="CONTAINS"
                     ))
+
+    # Add SHARES_INDICATOR_WITH edges between investigations sharing any entity
+    if not investigation_id:
+        for ent_id, linked_invs in entity_investigations.items():
+            if len(linked_invs) >= 2:
+                for i in range(len(linked_invs)):
+                    for j in range(i + 1, len(linked_invs)):
+                        src, tgt = linked_invs[i], linked_invs[j]
+                        share_key = tuple(sorted([src, tgt]))
+                        if share_key not in seen_edges:
+                            seen_edges.add(share_key)
+                            edges.append(GraphEdge(
+                                id=f"e-share-{len(edges)+1}",
+                                source=src,
+                                target=tgt,
+                                label="SHARES_INDICATOR_WITH",
+                                type="SHARES_INDICATOR_WITH"
+                            ))
 
     return InvestigationGraphResponse(
         investigation_id=investigation_id,

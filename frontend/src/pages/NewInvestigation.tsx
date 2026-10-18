@@ -540,52 +540,87 @@ export const NewInvestigation: React.FC = () => {
 
               {/* Local Gemma 4 Analytical Report */}
               <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-4">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#C27803]" />
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
-                    Local Gemma 4 Analytical Report
-                  </h3>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#C27803]" />
+                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
+                      EXPLANATORY AI (Gemma 4)
+                    </h3>
+                  </div>
+                  {investigation.gemma_report && (
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#6C1A1A]/10 text-[#6C1A1A] dark:text-[#FBE6C2] font-mono">
+                      {investigation.gemma_report.model_identifier}
+                    </span>
+                  )}
                 </div>
 
                 {investigation.gemma_report ? (
                   <div className="space-y-4 text-xs text-[#2A0E0E] dark:text-[#F3E6D5]">
                     <div className="p-3.5 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 italic font-medium leading-relaxed">
-                      "{investigation.gemma_report.executive_summary}"
+                      "{investigation.gemma_report.summary || investigation.gemma_report.executive_summary}"
                     </div>
 
-                    <div className="space-y-2">
-                      <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
-                        Main Findings:
-                      </strong>
-                      <ul className="list-disc list-inside space-y-1">
-                        {investigation.gemma_report.main_findings.map((f, i) => (
-                          <li key={i}>{f}</li>
-                        ))}
-                      </ul>
-                    </div>
+                    {investigation.gemma_report.threat_narrative && (
+                      <div className="space-y-1">
+                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                          Threat Narrative:
+                        </strong>
+                        <p className="text-xs leading-relaxed opacity-90">
+                          {investigation.gemma_report.threat_narrative}
+                        </p>
+                      </div>
+                    )}
 
-                    <div className="space-y-2">
-                      <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
-                        Supporting Evidence:
-                      </strong>
-                      <ul className="list-disc list-inside space-y-1">
-                        {investigation.gemma_report.supporting_evidence.map((s, i) => (
-                          <li key={i}>{s}</li>
-                        ))}
-                      </ul>
-                    </div>
+                    {investigation.gemma_report.psychological_mechanisms && investigation.gemma_report.psychological_mechanisms.length > 0 && (
+                      <div className="space-y-1.5">
+                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                          Psychological Mechanisms:
+                        </strong>
+                        <div className="flex flex-wrap gap-1.5">
+                          {investigation.gemma_report.psychological_mechanisms.map((mech, i) => (
+                            <span key={i} className="px-2 py-0.5 rounded-md bg-[#6C1A1A]/10 dark:bg-[#FBE6C2]/10 text-[#6C1A1A] dark:text-[#FBE6C2] text-[11px] font-medium">
+                              {mech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {investigation.gemma_report.likely_next_steps && investigation.gemma_report.likely_next_steps.length > 0 && (
+                      <div className="space-y-1">
+                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                          Likely Next Steps:
+                        </strong>
+                        <ul className="list-disc list-inside space-y-1">
+                          {investigation.gemma_report.likely_next_steps.map((step, i) => (
+                            <li key={i}>{step}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {investigation.gemma_report.educational_analogy && (
+                      <div className="p-3 rounded-xl bg-[#2A0E0E]/5 dark:bg-[#F3E6D5]/5 border border-[#6C1A1A]/10 text-xs">
+                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B] mb-1">
+                          Educational Analogy:
+                        </strong>
+                        <p className="italic opacity-90">
+                          {investigation.gemma_report.educational_analogy}
+                        </p>
+                      </div>
+                    )}
 
                     <div className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B] pt-2 border-t border-[#6C1A1A]/10">
                       {investigation.gemma_report.disclaimer}
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl bg-[#E2CEB9]/50 dark:bg-[#3A1313]/50 text-xs text-[#7E3E3E] dark:text-[#C9B29B] space-y-1">
-                    <div className="font-bold text-[#2A0E0E] dark:text-[#F3E6D5]">
-                      AI report unavailable (Ollama service not running locally)
+                  <div className="p-4 rounded-xl bg-[#E2CEB9]/50 dark:bg-[#3A1313]/50 text-xs text-[#7E3E3E] dark:text-[#C9B29B] space-y-1.5">
+                    <div className="font-bold text-[#A82020] dark:text-[#FBE6C2]">
+                      AI synthesis unavailable. Deterministic and model evidence above are fully functional.
                     </div>
-                    <p className="text-[11px]">
-                      Deterministic machine learning models, character span extractors, and risk index calculations remain fully operational above. To enable local Gemma reports, start Ollama with <code>ollama run gemma4:e2b</code>.
+                    <p className="text-[11px] leading-relaxed">
+                      ScamTrace AI prioritizes factual, deterministic extraction over generative hallucinations. Local Gemma 4 reports require an active local Ollama daemon (e.g. <code>ollama run gemma4:e2b</code>). All trained classifiers, extracted spans, and safety rules remain 100% active.
                     </p>
                   </div>
                 )}

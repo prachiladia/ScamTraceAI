@@ -31,13 +31,18 @@ export interface ModelPrediction {
 }
 
 export interface GemmaReport {
-  executive_summary: string;
-  main_findings: string[];
-  supporting_evidence: string[];
-  contradictory_or_missing_evidence: string[];
-  uncertainties: string[];
-  user_safety_steps: string[];
-  human_verification_advisable: boolean;
+  summary: string;
+  threat_narrative: string;
+  psychological_mechanisms: string[];
+  likely_next_steps: string[];
+  educational_analogy: string;
+  executive_summary?: string;
+  main_findings?: string[];
+  supporting_evidence?: string[];
+  contradictory_or_missing_evidence?: string[];
+  uncertainties?: string[];
+  user_safety_steps?: string[];
+  human_verification_advisable?: boolean;
   model_identifier: string;
   generated_at: string;
   disclaimer: string;

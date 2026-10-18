@@ -114,6 +114,11 @@ export const DEMO_INVESTIGATIONS: Investigation[] = [
       },
     ],
     gemma_report: {
+      summary: 'DEMO REPORT: Highly dangerous credential harvesting attack actively impersonating SBI with urgency coercion.',
+      threat_narrative: 'Victim is coerced with immediate banking suspension unless they access an unauthorized domain to supply credentials.',
+      psychological_mechanisms: ['Artificial Urgency', 'Fear of Account Loss', 'Authority Impersonation'],
+      likely_next_steps: ['Harvest banking credentials and OTP', 'Initiate unauthorized fund transfers'],
+      educational_analogy: 'Like a scammer outside a bank branch handing you a fake deposit slip to write down your PIN.',
       executive_summary: 'DEMO REPORT: Highly dangerous credential harvesting attack actively impersonating SBI with urgency coercion.',
       main_findings: [
         'Sender is employing coercive time pressure (2 hour deadline).',

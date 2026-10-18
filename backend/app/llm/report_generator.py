@@ -75,12 +75,14 @@ async def generate_gemma_report(
 
     user_prompt = f"""Analyze the following structured forensic data and output a JSON analysis matching this schema:
 {{
-  "executive_summary": "1-2 sentence executive assessment",
-  "main_findings": ["finding 1", "finding 2"],
-  "supporting_evidence": ["evidence 1", "evidence 2"],
-  "contradictory_or_missing_evidence": ["missing evidence 1"],
-  "uncertainties": ["uncertainty 1"],
-  "user_safety_steps": ["step 1", "step 2"],
+  "summary": "1-2 sentence executive summary of the scam technique",
+  "threat_narrative": "Forensic breakdown of the threat narrative presented in the message",
+  "psychological_mechanisms": ["e.g. Artificial Urgency", "Fear of Account Loss"],
+  "likely_next_steps": ["What the scammer expects the victim to do next"],
+  "educational_analogy": "A simple real-world analogy explaining why this is a trap",
+  "main_findings": ["Key technical finding 1", "Key technical finding 2"],
+  "supporting_evidence": ["Evidence point 1", "Evidence point 2"],
+  "user_safety_steps": ["Protective step 1", "Protective step 2"],
   "human_verification_advisable": true
 }}
 
@@ -104,9 +106,20 @@ Forensic Data:
         return None
 
     try:
+        summary_val = str(parsed_json.get("summary") or parsed_json.get("executive_summary") or "Forensic analysis completed.")
+        narrative_val = str(parsed_json.get("threat_narrative") or summary_val)
+        psych_val = [str(x) for x in parsed_json.get("psychological_mechanisms", ["Urgency pressure"])]
+        steps_val = [str(x) for x in parsed_json.get("likely_next_steps", ["Credential harvesting landing page"])]
+        analogy_val = str(parsed_json.get("educational_analogy") or "Like a stranger wearing a fake uniform asking for your keys.")
+
         return GemmaReport(
-            executive_summary=str(parsed_json.get("executive_summary", "Forensic analysis completed.")),
-            main_findings=[str(x) for x in parsed_json.get("main_findings", [])],
+            summary=summary_val,
+            threat_narrative=narrative_val,
+            psychological_mechanisms=psych_val,
+            likely_next_steps=steps_val,
+            educational_analogy=analogy_val,
+            executive_summary=summary_val,
+            main_findings=[str(x) for x in parsed_json.get("main_findings", [])] or [summary_val],
             supporting_evidence=[str(x) for x in parsed_json.get("supporting_evidence", [])],
             contradictory_or_missing_evidence=[str(x) for x in parsed_json.get("contradictory_or_missing_evidence", [])],
             uncertainties=[str(x) for x in parsed_json.get("uncertainties", [])],

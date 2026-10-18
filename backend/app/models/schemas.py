@@ -28,16 +28,21 @@ class EntityItem(BaseModel):
     context: str
 
 class GemmaReport(BaseModel):
-    executive_summary: str
-    main_findings: List[str]
-    supporting_evidence: List[str]
-    contradictory_or_missing_evidence: List[str]
-    uncertainties: List[str]
-    user_safety_steps: List[str]
-    human_verification_advisable: bool
-    model_identifier: str
-    generated_at: str
-    disclaimer: str
+    summary: str
+    threat_narrative: str
+    psychological_mechanisms: List[str]
+    likely_next_steps: List[str]
+    educational_analogy: str
+    executive_summary: Optional[str] = None
+    main_findings: Optional[List[str]] = None
+    supporting_evidence: Optional[List[str]] = None
+    contradictory_or_missing_evidence: Optional[List[str]] = None
+    uncertainties: Optional[List[str]] = None
+    user_safety_steps: Optional[List[str]] = None
+    human_verification_advisable: Optional[bool] = True
+    model_identifier: str = "Gemma 4 (Ollama)"
+    generated_at: str = ""
+    disclaimer: str = "Synthesized by local Gemma 4 model from structured forensic indicators. Decision support only; not legal evidence."
 
 class ModelPrediction(BaseModel):
     model_name: str

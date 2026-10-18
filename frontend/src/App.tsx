@@ -11,6 +11,8 @@ import { CookieBanner } from './components/common/CookieBanner';
 import { BackToTop } from './components/common/BackToTop';
 import { CommandPalette } from './components/common/CommandPalette';
 import { FeedbackModal } from './components/common/FeedbackModal';
+import { NetworkStatusBanner } from './components/common/NetworkStatusBanner';
+import { KeyboardShortcutsModal } from './components/common/KeyboardShortcutsModal';
 import { captureUtmParameters } from './utils/utm';
 
 // Pages
@@ -77,6 +79,8 @@ export const App: React.FC = () => {
             <CookieBanner />
             <BackToTop />
             <FeedbackModal />
+            <NetworkStatusBanner />
+            <KeyboardShortcutsModal />
           </div>
         </Router>
       </ToastProvider>

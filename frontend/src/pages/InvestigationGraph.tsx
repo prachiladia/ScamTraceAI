@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   ReactFlow,
@@ -11,11 +11,12 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import {
-  Network, ShieldAlert, Globe, Phone, Mail, Hash, Filter,
-  RefreshCw, Info, Layers, Tag, Eye, ArrowLeft
+  Network,
+  RefreshCw,
+  ArrowLeft
 } from 'lucide-react';
 import { fetchGraphData } from '../services/api';
-import type { InvestigationGraph as GraphData, GraphNode, GraphEdge } from '../types';
+import type { InvestigationGraph as GraphData, GraphNode } from '../types';
 import { useTheme } from '../context/ThemeContext';
 
 export const InvestigationGraphPage: React.FC = () => {

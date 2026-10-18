@@ -14,7 +14,7 @@ from contextlib import asynccontextmanager
 
 from backend.app.config import settings
 from backend.app.database import engine, Base
-from backend.app.routes import health
+from backend.app.routes import health, investigations, campaigns, models_api, feedback
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -61,6 +61,10 @@ async def limit_request_size(request: Request, call_next):
 
 # Include Routers
 app.include_router(health.router)
+app.include_router(investigations.router)
+app.include_router(campaigns.router)
+app.include_router(models_api.router)
+app.include_router(feedback.router)
 
 @app.get("/")
 async def root():

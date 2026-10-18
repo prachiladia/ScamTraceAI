@@ -1,0 +1,66 @@
+{
+  "model_name": "LexicalUrlClassifier-RandomForest",
+  "model_version": "v1.0.0",
+  "trained_at": "2026-10-18T09:21:08.030507+00:00",
+  "dataset_name": "Phishing URLs with Extracted Features (Victus Adi)",
+  "dataset_sha256": "1de48e23501c544b6d345fcdeca544c42f71ab10d3061e174b1d97feafc07db8",
+  "split_seed": 42,
+  "features_used": [
+    "url_length",
+    "num_dots",
+    "has_https",
+    "has_ip",
+    "num_subdirs",
+    "num_params",
+    "suspicious_words",
+    "special_char_count",
+    "digits_count",
+    "entropy"
+  ],
+  "excluded_features_rationale": "Non-lexical features requiring external network queries (WHOIS, DNS, web content) were excluded per Rule A.6 to guarantee 100% offline local privacy-safe analysis.",
+  "sample_counts": {
+    "total_raw": 160064,
+    "deduplicated": 160064,
+    "train": 112040,
+    "val": 24014,
+    "test": 24010
+  },
+  "class_support_test": {
+    "legitimate_url": 123,
+    "phishing_url": 23887
+  },
+  "test_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "roc_auc": 1.0,
+    "confusion_matrix": [
+      [
+        123,
+        0
+      ],
+      [
+        0,
+        23887
+      ]
+    ]
+  },
+  "feature_importances": {
+    "num_subdirs": 0.3711,
+    "url_length": 0.3412,
+    "num_dots": 0.1271,
+    "entropy": 0.0878,
+    "digits_count": 0.0385,
+    "has_ip": 0.0163,
+    "has_https": 0.0152,
+    "special_char_count": 0.0028,
+    "num_params": 0.0,
+    "suspicious_words": 0.0
+  },
+  "target_mapping": {
+    "0": "legitimate_url",
+    "1": "phishing_url"
+  },
+  "disclaimer": "Metrics computed strictly on held-out test partition. Zero network or DNS queries are performed during inference."
+}

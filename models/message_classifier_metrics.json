@@ -1,0 +1,43 @@
+{
+  "model_name": "MessageClassifier-TFIDF-CalibratedLR",
+  "model_version": "v1.0.0",
+  "trained_at": "2026-10-18T09:21:06.703353+00:00",
+  "dataset_name": "SMS Spam Collection (Deduplicated)",
+  "dataset_sha256": "d368d659ea5fa1c2cbf9f6be756622b4329ef8c3bf105572c03eb0741f908701",
+  "split_seed": 42,
+  "sample_counts": {
+    "total_raw": 5572,
+    "deduplicated": 5169,
+    "train": 3617,
+    "val": 776,
+    "test": 776
+  },
+  "class_support_test": {
+    "neutral_ham": 678,
+    "spam_related": 98
+  },
+  "test_metrics": {
+    "accuracy": 0.9768,
+    "precision": 0.9348,
+    "recall": 0.8776,
+    "f1": 0.9053,
+    "roc_auc": 0.9908,
+    "brier_score": 0.0202,
+    "confusion_matrix": [
+      [
+        672,
+        6
+      ],
+      [
+        12,
+        86
+      ]
+    ]
+  },
+  "is_calibrated": true,
+  "target_mapping": {
+    "0": "neutral_ham",
+    "1": "spam_related"
+  },
+  "disclaimer": "Metrics computed strictly on held-out test partition. Label 'spam_related' indicates deceptive/unsolicited pattern match, NOT criminal proof."
+}

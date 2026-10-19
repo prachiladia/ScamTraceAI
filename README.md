@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SCAMTRACE AI
 
 > **"Don't just detect the scam. Expose the evidence behind it."**

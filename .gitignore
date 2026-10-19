@@ -38,3 +38,7 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+tempCodeRunnerFile*
+assignment*.py
+assigmnent*.py
+Untitled*.py

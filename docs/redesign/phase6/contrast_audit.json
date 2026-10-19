@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Primary Cyan on Dark Navy Background",
+    "fg": "#22D3EE",
+    "bg": "#080D18",
+    "context": "Large UI / Highlights",
+    "ratio": 10.75,
+    "min_required": 3.0,
+    "passed": true
+  },
+  {
+    "name": "Dark Navy Text on Primary Cyan Button",
+    "fg": "#080D18",
+    "bg": "#22D3EE",
+    "context": "Normal Text (Buttons)",
+    "ratio": 10.75,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Text Primary (Slate 100) on Surface (#141F30)",
+    "fg": "#F1F5F9",
+    "bg": "#141F30",
+    "context": "Normal Text",
+    "ratio": 15.11,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Text Secondary (Slate 400) on Surface (#141F30)",
+    "fg": "#94A3B8",
+    "bg": "#141F30",
+    "context": "Supporting Text",
+    "ratio": 6.46,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Risk High (#F87171) on Surface (#141F30)",
+    "fg": "#F87171",
+    "bg": "#141F30",
+    "context": "Badge Label / Icon",
+    "ratio": 5.99,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Risk Warning (#FBBF24) on Surface (#141F30)",
+    "fg": "#FBBF24",
+    "bg": "#141F30",
+    "context": "Badge Label / Icon",
+    "ratio": 9.92,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Risk Low (#2DD4BF) on Surface (#141F30)",
+    "fg": "#2DD4BF",
+    "bg": "#141F30",
+    "context": "Badge Label / Icon",
+    "ratio": 8.89,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Light Theme: Text Slate 900 on White Surface",
+    "fg": "#0F172A",
+    "bg": "#FFFFFF",
+    "context": "Normal Text",
+    "ratio": 17.85,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Light Theme: Text Slate 600 on White Surface",
+    "fg": "#475569",
+    "bg": "#FFFFFF",
+    "context": "Supporting Text",
+    "ratio": 7.58,
+    "min_required": 4.5,
+    "passed": true
+  },
+  {
+    "name": "Light Theme: Cyan Accent (#0891B2) on Light Bg (#F8FAFC)",
+    "fg": "#0891B2",
+    "bg": "#F8FAFC",
+    "context": "Large UI / Focus",
+    "ratio": 3.52,
+    "min_required": 3.0,
+    "passed": true
+  }
+]

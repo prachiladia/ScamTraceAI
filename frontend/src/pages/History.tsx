@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Trash2, ShieldAlert, RefreshCw } from 'lucide-react';
+import { Search, Trash2, ShieldAlert, RefreshCw, ExternalLink } from 'lucide-react';
 import { fetchInvestigations, deleteInvestigation } from '../services/api';
 import type { Investigation } from '../types';
 import { useToast } from '../components/common/Toast';
+import { SeverityChip } from '../components/ui/SeverityChip';
 
 export const History: React.FC = () => {
   const [investigations, setInvestigations] = useState<Investigation[]>([]);
@@ -48,44 +49,47 @@ export const History: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-6">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border-subtle">
         <div>
-          <h1 className="font-display text-3xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-border-subtle bg-surface text-[10px] font-mono uppercase tracking-wider text-accent-primary mb-2">
+            Forensic Case Repository
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl font-black text-text-primary uppercase tracking-tight">
             Investigation History & Case Archive
           </h1>
-          <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] mt-1">
+          <p className="text-xs text-text-secondary mt-1">
             Browse, inspect, and manage stored forensic case records.
           </p>
         </div>
 
         {/* Search Input */}
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#FBE6C2]/40 dark:bg-[#2A0D0D]">
-          <Search className="w-3.5 h-3.5 text-[#A82020]" />
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-border-subtle bg-surface-elevated/80 w-full sm:w-72 focus-within:border-accent-primary/60 focus-within:ring-1 focus-within:ring-accent-primary/40 transition-all">
+          <Search className="w-3.5 h-3.5 text-text-secondary shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Filter records..."
-            className="bg-transparent text-xs text-[#2A0E0E] dark:text-[#F3E6D5] focus:outline-none"
+            placeholder="Filter records or threat level..."
+            className="bg-transparent text-xs text-text-primary placeholder-text-secondary focus:outline-none w-full font-sans"
           />
         </div>
       </div>
 
-      <div className="rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 overflow-hidden">
+      <div className="rounded-xl border border-border-subtle bg-surface/80 backdrop-blur-sm overflow-hidden">
         {loading ? (
-          <div className="py-12 text-center text-xs text-[#7E3E3E] dark:text-[#C9B29B] flex items-center justify-center gap-2">
-            <RefreshCw className="w-4 h-4 animate-spin text-[#A82020]" />
-            <span>Loading records...</span>
+          <div className="py-16 text-center text-xs text-text-secondary flex items-center justify-center gap-2">
+            <RefreshCw className="w-4 h-4 animate-spin text-accent-primary" />
+            <span className="font-mono">Loading case records...</span>
           </div>
         ) : filtered.length === 0 ? (
-          <div className="py-12 text-center text-xs text-[#7E3E3E] dark:text-[#C9B29B]">
+          <div className="py-16 text-center text-xs text-text-secondary font-mono">
             No investigations match your query.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/60 dark:bg-[#2A0D0D]/80 font-bold uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                <tr className="border-b border-border-subtle bg-surface-elevated/70 font-mono font-bold uppercase tracking-wider text-[11px] text-text-secondary">
                   <th className="py-3 px-4">Date / Time</th>
                   <th className="py-3 px-4">Message Snippet</th>
                   <th className="py-3 px-4">Threat Level</th>
@@ -94,45 +98,38 @@ export const History: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#6C1A1A]/10 dark:divide-[#A82020]/20">
+              <tbody className="divide-y divide-border-subtle/50">
                 {filtered.map((inv) => (
-                  <tr key={inv.id} className="hover:bg-[#FBE6C2]/50 dark:hover:bg-[#3A1313]/30 transition-colors">
-                    <td className="py-3 px-4 whitespace-nowrap text-[#7E3E3E] dark:text-[#C9B29B] font-mono">
+                  <tr key={inv.id} className="hover:bg-surface-elevated/40 transition-colors">
+                    <td className="py-3 px-4 whitespace-nowrap text-text-secondary font-mono text-[11px]">
                       {new Date(inv.created_at).toLocaleDateString()} {new Date(inv.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </td>
-                    <td className="py-3 px-4 max-w-xs truncate font-medium">
+                    <td className="py-3 px-4 max-w-xs truncate font-medium text-text-primary">
                       {inv.input_text}
                     </td>
                     <td className="py-3 px-4 whitespace-nowrap">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                        inv.risk_level === 'High concern'
-                          ? 'bg-red-500 text-white'
-                          : inv.risk_level === 'Suspicious'
-                          ? 'bg-amber-500 text-white'
-                          : 'bg-teal-600 text-white'
-                      }`}>
-                        {inv.risk_level}
-                      </span>
+                      <SeverityChip level={inv.risk_level as any} size="sm" />
                     </td>
-                    <td className="py-3 px-4 whitespace-nowrap font-mono font-bold">
+                    <td className="py-3 px-4 whitespace-nowrap font-mono font-bold text-text-primary">
                       {inv.risk_score.toFixed(1)}/100
                     </td>
-                    <td className="py-3 px-4 whitespace-nowrap">
+                    <td className="py-3 px-4 whitespace-nowrap font-mono text-text-secondary">
                       {inv.evidence.length} flags
                     </td>
-                    <td className="py-3 px-4 text-right whitespace-nowrap space-x-2">
+                    <td className="py-3 px-4 text-right whitespace-nowrap space-x-3">
                       <Link
                         to={`/investigate?id=${inv.id}`}
-                        className="text-[#A82020] dark:text-[#FBE6C2] font-bold hover:underline"
+                        className="inline-flex items-center gap-1 text-accent-primary hover:text-accent-primary/80 font-mono text-[11px] font-semibold hover:underline"
                       >
-                        Inspect
+                        <span>Inspect</span>
+                        <ExternalLink className="w-3 h-3" />
                       </Link>
                       <button
                         onClick={() => setConfirmDeleteId(inv.id)}
-                        className="text-red-600 hover:text-red-800 p-1 rounded"
+                        className="text-text-secondary hover:text-risk-high p-1 rounded transition-colors inline-flex items-center"
                         title="Delete investigation"
                       >
-                        <Trash2 className="w-3.5 h-3.5 inline" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>
@@ -143,27 +140,27 @@ export const History: React.FC = () => {
         )}
       </div>
 
-      {/* Confirmation Modal (H.17) */}
+      {/* Confirmation Modal */}
       {confirmDeleteId && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
-          <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-[#F3E6D5] dark:bg-[#1A0707] p-6 shadow-2xl space-y-4">
-            <h3 className="font-bold text-base text-red-600 flex items-center gap-2">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-sm rounded-2xl border border-risk-high/30 bg-surface-elevated p-6 shadow-2xl space-y-4">
+            <h3 className="font-display font-bold text-base text-risk-high flex items-center gap-2">
               <ShieldAlert className="w-5 h-5" />
               <span>Confirm Record Deletion</span>
             </h3>
-            <p className="text-xs text-[#5C2222] dark:text-[#C9B29B]">
+            <p className="text-xs text-text-secondary leading-relaxed">
               Are you sure you want to permanently delete this investigation record from the local database? This cannot be undone.
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setConfirmDeleteId(null)}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D]"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-surface border border-border-subtle transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleDelete(confirmDeleteId)}
-                className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 cursor-pointer"
+                className="px-4 py-1.5 rounded-lg bg-risk-high text-[#080D18] text-xs font-bold shadow-md hover:bg-risk-high/90 cursor-pointer transition-colors"
               >
                 Delete Record
               </button>

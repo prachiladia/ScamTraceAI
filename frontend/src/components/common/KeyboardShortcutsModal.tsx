@@ -88,38 +88,38 @@ export const KeyboardShortcutsModal: React.FC = () => {
       role="dialog"
       aria-modal="true"
       aria-label="Keyboard Shortcuts Cheatsheet"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs"
     >
-      <div className="relative w-full max-w-lg rounded-3xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] shadow-2xl p-6 space-y-5 text-[#2A0E0E] dark:text-[#F3E6D5]">
-        <div className="flex items-center justify-between pb-3 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
+      <div className="relative w-full max-w-lg rounded-2xl border border-border-subtle bg-surface-elevated shadow-2xl p-6 space-y-5 text-text-primary">
+        <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
           <div className="flex items-center gap-2">
-            <Keyboard className="w-5 h-5 text-[#A82020]" />
+            <Keyboard className="w-5 h-5 text-accent-primary" />
             <h3 className="font-display font-black text-lg uppercase tracking-wide">
               Keyboard Shortcuts Cheatsheet
             </h3>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-1 rounded-lg hover:bg-black/10 dark:hover:bg-white/10 transition-colors cursor-pointer"
+            className="p-1 rounded-lg text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
             aria-label="Close shortcuts cheatsheet"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="divide-y divide-[#6C1A1A]/10 dark:divide-[#A82020]/20 text-xs">
+        <div className="divide-y divide-border-subtle/50 text-xs">
           {shortcuts.map((sc, i) => (
             <div key={i} className="py-2.5 flex items-center justify-between">
-              <span className="font-medium opacity-90">{sc.action}</span>
-              <kbd className="px-2.5 py-1 rounded-lg bg-[#FBE6C2] dark:bg-[#2A0D0D] border border-[#6C1A1A]/20 dark:border-[#A82020]/30 font-mono font-bold text-[11px] text-[#A82020] dark:text-[#FBE6C2] shadow-xs">
+              <span className="font-medium text-text-secondary">{sc.action}</span>
+              <kbd className="px-2.5 py-1 rounded-lg bg-surface border border-border-subtle font-mono font-bold text-[11px] text-accent-primary shadow-xs">
                 {sc.key}
               </kbd>
             </div>
           ))}
         </div>
 
-        <div className="text-[11px] font-mono text-center text-[#7E3E3E] dark:text-[#C9B29B] pt-2">
-          Press <kbd className="px-1.5 py-0.5 rounded bg-black/10 dark:bg-white/10 font-bold">Esc</kbd> or click outside to dismiss
+        <div className="text-[11px] font-mono text-center text-text-secondary pt-2">
+          Press <kbd className="px-1.5 py-0.5 rounded bg-surface border border-border-subtle font-bold text-accent-primary">Esc</kbd> or click outside to dismiss
         </div>
       </div>
     </div>

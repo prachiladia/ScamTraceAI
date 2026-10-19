@@ -292,46 +292,46 @@ export const ScamAcademy: React.FC = () => {
   }, [glossarySearch, glossaryCategory]);
 
   return (
-    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-20">
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 space-y-16">
       {/* Header */}
       <div className="text-center space-y-4 max-w-3xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#FBE6C2]/60 dark:bg-[#2A0D0D] text-xs font-mono font-bold text-[#A82020] dark:text-[#FBE6C2]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-border-subtle bg-surface text-xs font-mono font-bold text-accent-primary">
           <BookOpen className="w-3.5 h-3.5" />
           <span>CYBER RESILIENCE FIELD MANUAL</span>
         </div>
-        <h1 className="font-display text-4xl sm:text-5xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-tight">
+        <h1 className="font-display text-3xl sm:text-4xl md:text-5xl font-black text-text-primary uppercase tracking-tight">
           Scam Academy & Defense Guide
         </h1>
-        <p className="text-sm sm:text-base text-[#5C2222] dark:text-[#C9B29B] leading-relaxed">
+        <p className="text-sm sm:text-base text-text-secondary leading-relaxed">
           Master the psychological coercion tactics, deceptive digital architecture, and actionable incident protocols needed to protect yourself and your family.
         </p>
       </div>
 
-      {/* Verified Incident Response Helplines (India, US, UK, Global) */}
-      <div className="p-8 rounded-3xl border-2 border-[#A82020]/30 bg-red-500/5 dark:bg-red-950/20 space-y-6">
+      {/* Verified Incident Response Helplines */}
+      <div className="p-6 sm:p-8 rounded-2xl border border-border-subtle bg-surface/90 space-y-6">
         <div className="flex items-center gap-2">
-          <Flag className="w-5 h-5 text-[#A82020]" />
-          <h2 className="font-display text-xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-wide">
+          <Flag className="w-5 h-5 text-accent-primary" />
+          <h2 className="font-display text-lg sm:text-xl font-black text-text-primary uppercase tracking-wide">
             Emergency Victim Reporting Directory (Verified Official Channels)
           </h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* India */}
-          <div className="p-5 rounded-2xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/20 dark:border-[#A82020]/30 space-y-3">
+          <div className="p-5 rounded-xl bg-surface-elevated/80 border border-border-subtle hover:border-accent-primary/40 transition-colors space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#A82020] dark:text-[#FBE6C2]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent-primary">
                 India (MHA & I4C)
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 font-mono font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-risk-high/15 text-risk-high font-mono font-bold">
                 24/7 Hotline
               </span>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-black font-mono text-[#2A0E0E] dark:text-[#F3E6D5]">
+              <div className="text-2xl font-black font-mono text-text-primary">
                 Dial 1930
               </div>
-              <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B] leading-relaxed">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
                 National Cybercrime Reporting Helpline to immediately freeze fraudulent banking transactions in transit.
               </p>
             </div>
@@ -340,7 +340,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://cybercrime.gov.in"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#A82020] dark:text-[#FBE6C2] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-accent-primary hover:underline"
               >
                 <span>cybercrime.gov.in</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -349,7 +349,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://sancharsaathi.gov.in/sfc"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#6C1A1A] dark:text-[#C9B29B] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-text-secondary hover:text-text-primary hover:underline"
               >
                 <span>Chakshu (Fake Calls & SMS)</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -358,20 +358,20 @@ export const ScamAcademy: React.FC = () => {
           </div>
 
           {/* United States */}
-          <div className="p-5 rounded-2xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/20 dark:border-[#A82020]/30 space-y-3">
+          <div className="p-5 rounded-xl bg-surface-elevated/80 border border-border-subtle hover:border-accent-primary/40 transition-colors space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#A82020] dark:text-[#FBE6C2]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent-primary">
                 United States (FBI & FTC)
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 font-mono font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent-secondary/15 text-accent-secondary font-mono font-bold">
                 Federal
               </span>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-black font-mono text-[#2A0E0E] dark:text-[#F3E6D5]">
+              <div className="text-2xl font-black font-mono text-text-primary">
                 FBI IC3 & FTC
               </div>
-              <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B] leading-relaxed">
+              <p className="text-[11px] text-text-secondary leading-relaxed">
                 Federal Bureau of Investigation Internet Crime Complaint Center and Federal Trade Commission.
               </p>
             </div>
@@ -380,7 +380,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://www.ic3.gov"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#A82020] dark:text-[#FBE6C2] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-accent-primary hover:underline"
               >
                 <span>ic3.gov (FBI IC3)</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -389,7 +389,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://reportfraud.ftc.gov"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#6C1A1A] dark:text-[#C9B29B] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-text-secondary hover:text-text-primary hover:underline"
               >
                 <span>reportfraud.ftc.gov</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -398,21 +398,21 @@ export const ScamAcademy: React.FC = () => {
           </div>
 
           {/* UK & International */}
-          <div className="p-5 rounded-2xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/20 dark:border-[#A82020]/30 space-y-3">
+          <div className="p-5 rounded-xl bg-surface-elevated/80 border border-border-subtle hover:border-accent-primary/40 transition-colors space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold uppercase tracking-wider text-[#A82020] dark:text-[#FBE6C2]">
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-accent-primary">
                 UK & International
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-teal-500/10 text-teal-600 font-mono font-bold">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent-primary/15 text-accent-primary font-mono font-bold">
                 Global
               </span>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-black font-mono text-[#2A0E0E] dark:text-[#F3E6D5]">
-                Action Fraud (0300 123 2040)
+              <div className="text-2xl font-black font-mono text-text-primary">
+                Action Fraud
               </div>
-              <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B] leading-relaxed">
-                UK National Fraud and Cyber Crime Reporting Centre, plus free 7726 SMS scam forwarding.
+              <p className="text-[11px] text-text-secondary leading-relaxed">
+                UK National Fraud and Cyber Crime Reporting Centre (0300 123 2040), plus free 7726 SMS scam forwarding.
               </p>
             </div>
             <div className="pt-2 flex flex-col gap-2">
@@ -420,7 +420,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://www.actionfraud.police.uk"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#A82020] dark:text-[#FBE6C2] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-accent-primary hover:underline"
               >
                 <span>actionfraud.police.uk</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -429,7 +429,7 @@ export const ScamAcademy: React.FC = () => {
                 href="https://apwg.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between text-xs font-bold font-mono text-[#6C1A1A] dark:text-[#C9B29B] hover:underline"
+                className="flex items-center justify-between text-xs font-bold font-mono text-text-secondary hover:text-text-primary hover:underline"
               >
                 <span>APWG (Anti-Phishing Group)</span>
                 <Globe className="w-3.5 h-3.5" />
@@ -441,26 +441,26 @@ export const ScamAcademy: React.FC = () => {
 
       {/* Interactive Simulation: Spot The Scam */}
       <section id="quiz" className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-border-subtle">
           <div>
-            <h2 className="font-display text-2xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-wide flex items-center gap-2">
-              <ShieldAlert className="w-5 h-5 text-[#A82020]" />
+            <h2 className="font-display text-xl sm:text-2xl font-black text-text-primary uppercase tracking-wide flex items-center gap-2">
+              <ShieldAlert className="w-5 h-5 text-accent-primary" />
               <span>Spot The Scam Simulation Quiz</span>
             </h2>
-            <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] mt-0.5">
+            <p className="text-xs text-text-secondary mt-0.5">
               Test your ability to recognize manipulative urgency, credential harvesting, and deceptive domains.
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             {showResults && (
-              <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-[#A82020]/10 text-[#A82020] dark:text-[#FBE6C2]">
+              <span className="text-xs font-mono font-bold px-3 py-1 rounded-lg bg-accent-primary/15 text-accent-primary border border-accent-primary/30">
                 Score: {calculateScore()} / {QUIZ_QUESTIONS.length}
               </span>
             )}
             <button
               onClick={handleResetQuiz}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 text-xs font-mono font-bold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border-subtle bg-surface text-xs font-mono font-bold text-text-secondary hover:text-text-primary hover:bg-surface-elevated transition-colors cursor-pointer"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Reset</span>
@@ -475,16 +475,16 @@ export const ScamAcademy: React.FC = () => {
             return (
               <div
                 key={q.id}
-                className="p-6 rounded-3xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 flex flex-col justify-between space-y-4 shadow-sm"
+                className="p-6 rounded-2xl border border-border-subtle bg-surface flex flex-col justify-between space-y-4 shadow-sm"
               >
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#A82020] dark:text-[#FBE6C2]">
+                    <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-accent-primary">
                       Case File #{q.id} &bull; {q.title}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 text-xs font-mono leading-relaxed text-[#2A0E0E] dark:text-[#F3E6D5]">
+                  <div className="p-3.5 rounded-xl bg-surface-elevated border border-border-subtle/70 text-xs font-mono leading-relaxed text-text-primary">
                     {q.scenario}
                   </div>
 
@@ -497,12 +497,14 @@ export const ScamAcademy: React.FC = () => {
                           onClick={() => handleSelectOption(q.id, optIdx)}
                           className={`w-full text-left p-3 rounded-xl border text-xs transition-all cursor-pointer ${
                             isChosen
-                              ? 'border-[#A82020] bg-[#A82020]/10 font-bold'
-                              : 'border-[#6C1A1A]/20 dark:border-[#A82020]/20 hover:bg-[#FBE6C2]/70 dark:hover:bg-[#3A1313]/50'
+                              ? 'border-accent-primary bg-accent-primary/10 text-text-primary font-semibold shadow-xs ring-1 ring-accent-primary/40'
+                              : 'border-border-subtle hover:border-border-subtle/80 hover:bg-surface-elevated text-text-secondary hover:text-text-primary'
                           }`}
                         >
                           <div className="flex items-start gap-2.5">
-                            <span className="w-5 h-5 rounded-full border border-current flex items-center justify-center shrink-0 text-[10px] font-mono mt-0.5">
+                            <span className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 text-[10px] font-mono mt-0.5 ${
+                              isChosen ? 'border-accent-primary text-accent-primary' : 'border-border-subtle text-text-secondary'
+                            }`}>
                               {String.fromCharCode(65 + optIdx)}
                             </span>
                             <span className="leading-snug">{opt.text}</span>
@@ -517,24 +519,24 @@ export const ScamAcademy: React.FC = () => {
                   <div
                     className={`p-3.5 rounded-xl text-xs space-y-1 ${
                       q.options[selectedIdx].isCorrect
-                        ? 'bg-teal-500/10 border border-teal-500/30 text-teal-900 dark:text-teal-200'
-                        : 'bg-red-500/10 border border-red-500/30 text-red-900 dark:text-red-200'
+                        ? 'bg-accent-secondary/15 border border-accent-secondary/30 text-accent-secondary'
+                        : 'bg-risk-high/15 border border-risk-high/30 text-risk-high'
                     }`}
                   >
                     <div className="font-bold flex items-center gap-1.5">
                       {q.options[selectedIdx].isCorrect ? (
                         <>
-                          <CheckCircle2 className="w-4 h-4 text-teal-600" />
+                          <CheckCircle2 className="w-4 h-4 text-accent-secondary" />
                           <span>Correct Decision</span>
                         </>
                       ) : (
                         <>
-                          <XCircle className="w-4 h-4 text-red-600" />
+                          <XCircle className="w-4 h-4 text-risk-high" />
                           <span>Vulnerable Choice</span>
                         </>
                       )}
                     </div>
-                    <p className="leading-relaxed">{q.options[selectedIdx].explanation}</p>
+                    <p className="leading-relaxed opacity-90">{q.options[selectedIdx].explanation}</p>
                   </div>
                 )}
               </div>
@@ -545,7 +547,7 @@ export const ScamAcademy: React.FC = () => {
         <div className="pt-4 flex items-center justify-center">
           <button
             onClick={() => setShowResults(!showResults)}
-            className="px-8 py-3.5 rounded-2xl bg-[#A82020] hover:bg-[#8C1919] text-[#F3E6D5] font-mono font-bold text-xs uppercase tracking-wider shadow-lg transition-all cursor-pointer"
+            className="px-8 py-3.5 rounded-xl bg-accent-primary hover:bg-accent-primary/90 text-[#080D18] font-mono font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-cyan-500/20 transition-all cursor-pointer"
           >
             {showResults ? 'Hide Detailed Forensic Rationales' : 'Check Answers & View Forensic Explanations'}
           </button>
@@ -554,37 +556,37 @@ export const ScamAcademy: React.FC = () => {
 
       {/* Searchable Scam Glossary */}
       <section className="space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-border-subtle">
           <div>
-            <h2 className="font-display text-2xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-wide">
+            <h2 className="font-display text-xl sm:text-2xl font-black text-text-primary uppercase tracking-wide">
               Cybercrime Terminology & Glossary
             </h2>
-            <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] mt-0.5">
+            <p className="text-xs text-text-secondary mt-0.5">
               Authoritative definitions and forensic clues for common fraud mechanisms.
             </p>
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-3">
             <div className="relative w-full sm:w-64">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-[#7E3E3E] dark:text-[#C9B29B]" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-3 text-text-secondary" />
               <input
                 type="text"
                 placeholder="Search glossary..."
                 value={glossarySearch}
                 onChange={(e) => setGlossarySearch(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#A82020]"
+                className="w-full pl-8 pr-3 py-1.5 rounded-xl border border-border-subtle bg-surface-elevated text-xs font-mono text-text-primary placeholder-text-secondary focus:outline-none focus:ring-1 focus:ring-accent-primary/50"
               />
             </div>
 
-            <div className="flex items-center gap-1 self-start sm:self-auto">
+            <div className="flex items-center gap-1 self-start sm:self-auto flex-wrap">
               {(['All', 'Technical', 'Psychological', 'Actors & Methods'] as const).map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setGlossaryCategory(cat)}
                   className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-colors cursor-pointer ${
                     glossaryCategory === cat
-                      ? 'bg-[#A82020] text-white font-bold'
-                      : 'border border-[#6C1A1A]/20 dark:border-[#A82020]/30 hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D]'
+                      ? 'bg-accent-primary text-[#080D18] font-bold shadow-xs'
+                      : 'border border-border-subtle text-text-secondary hover:text-text-primary hover:bg-surface-elevated'
                   }`}
                 >
                   {cat}
@@ -598,27 +600,27 @@ export const ScamAcademy: React.FC = () => {
           {filteredGlossary.map((item, idx) => (
             <div
               key={idx}
-              className="p-5 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-3 flex flex-col justify-between"
+              className="p-5 rounded-2xl border border-border-subtle bg-surface space-y-3 flex flex-col justify-between hover:border-accent-primary/30 transition-colors"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-display font-black text-base uppercase tracking-wide text-[#2A0E0E] dark:text-[#F3E6D5]">
+                  <h3 className="font-display font-black text-base uppercase tracking-wide text-text-primary">
                     {item.term}
                   </h3>
-                  <span className="text-[9px] font-mono uppercase px-2 py-0.5 rounded-full bg-[#6C1A1A]/10 dark:bg-[#FBE6C2]/10 text-[#6C1A1A] dark:text-[#FBE6C2]">
+                  <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-surface-elevated border border-border-subtle text-accent-secondary">
                     {item.category}
                   </span>
                 </div>
-                <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] leading-relaxed">
+                <p className="text-xs text-text-secondary leading-relaxed">
                   {item.definition}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20 text-[11px] font-mono">
-                <strong className="text-[#A82020] dark:text-[#FBE6C2] uppercase text-[10px] block">
+              <div className="pt-3 border-t border-border-subtle text-[11px] font-mono space-y-1">
+                <strong className="text-accent-primary uppercase text-[10px] block font-bold">
                   Forensic Indicator:
                 </strong>
-                <span className="opacity-90">{item.forensicClue}</span>
+                <span className="text-text-secondary">{item.forensicClue}</span>
               </div>
             </div>
           ))}
@@ -627,9 +629,9 @@ export const ScamAcademy: React.FC = () => {
 
       {/* Accessible FAQ Accordion */}
       <section className="space-y-6">
-        <div className="pb-2 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
-          <h2 className="font-display text-2xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-wide flex items-center gap-2">
-            <HelpCircle className="w-5 h-5 text-[#A82020]" />
+        <div className="pb-3 border-b border-border-subtle">
+          <h2 className="font-display text-xl sm:text-2xl font-black text-text-primary uppercase tracking-wide flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-accent-primary" />
             <span>Frequently Asked Questions & Incident Advice</span>
           </h2>
         </div>
@@ -640,25 +642,25 @@ export const ScamAcademy: React.FC = () => {
             return (
               <div
                 key={idx}
-                className="rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 overflow-hidden"
+                className="rounded-xl border border-border-subtle bg-surface overflow-hidden transition-colors"
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : idx)}
-                  className="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-[#FBE6C2]/50 dark:hover:bg-[#3A1313]/50 transition-colors cursor-pointer"
+                  className="w-full p-5 text-left flex items-center justify-between gap-4 hover:bg-surface-elevated/70 transition-colors cursor-pointer"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-bold text-sm text-[#2A0E0E] dark:text-[#F3E6D5]">
+                  <span className="font-bold text-sm text-text-primary">
                     {faq.question}
                   </span>
                   {isOpen ? (
-                    <ChevronUp className="w-4 h-4 text-[#A82020] shrink-0" />
+                    <ChevronUp className="w-4 h-4 text-accent-primary shrink-0" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-[#7E3E3E] dark:text-[#C9B29B] shrink-0" />
+                    <ChevronDown className="w-4 h-4 text-text-secondary shrink-0" />
                   )}
                 </button>
 
                 {isOpen && (
-                  <div className="p-5 pt-0 text-xs sm:text-sm text-[#5C2222] dark:text-[#C9B29B] leading-relaxed border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20 bg-[#F3E6D5]/40 dark:bg-[#1A0707]/40">
+                  <div className="p-5 pt-0 text-xs sm:text-sm text-text-secondary leading-relaxed border-t border-border-subtle/50 bg-surface-elevated/40">
                     {faq.answer}
                   </div>
                 )}

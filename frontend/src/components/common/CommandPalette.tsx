@@ -96,24 +96,24 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
-      case 'Pages': return <FileText className="w-4 h-4 text-[#A82020]" />;
-      case 'Academy': return <BookOpen className="w-4 h-4 text-[#C27803]" />;
-      case 'Glossary': return <Shield className="w-4 h-4 text-[#1E6E60]" />;
-      default: return <HelpCircle className="w-4 h-4 text-[#6C1A1A]" />;
+      case 'Pages': return <FileText className="w-4 h-4 text-accent-primary" />;
+      case 'Academy': return <BookOpen className="w-4 h-4 text-risk-warning" />;
+      case 'Glossary': return <Shield className="w-4 h-4 text-accent-secondary" />;
+      default: return <HelpCircle className="w-4 h-4 text-accent-primary" />;
     }
   };
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-start justify-center pt-20 px-4 bg-black/75 backdrop-blur-xs"
       role="dialog"
       aria-modal="true"
       aria-label="Site Search"
     >
-      <div className="w-full max-w-xl rounded-2xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] shadow-2xl overflow-hidden flex flex-col">
+      <div className="w-full max-w-xl rounded-2xl border border-border-subtle bg-surface-elevated shadow-2xl overflow-hidden flex flex-col">
         {/* Search Input Bar */}
-        <div className="flex items-center px-4 py-3.5 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30 gap-3">
-          <Search className="w-5 h-5 text-[#A82020] shrink-0" />
+        <div className="flex items-center px-4 py-3.5 border-b border-border-subtle gap-3">
+          <Search className="w-5 h-5 text-accent-primary shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -123,15 +123,15 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
               setSelectedIndex(0);
             }}
             placeholder="Search tools, Academy topics, glossary, FAQ..."
-            className="w-full bg-transparent text-sm text-[#2A0E0E] dark:text-[#F3E6D5] placeholder-[#7E3E3E] dark:placeholder-[#C9B29B] focus:outline-none"
+            className="w-full bg-transparent text-sm text-text-primary placeholder-text-secondary focus:outline-none font-sans"
             aria-label="Search site"
           />
           {query && (
-            <button onClick={() => setQuery('')} className="p-1 text-xs text-[#7E3E3E] hover:text-[#2A0E0E]">
+            <button onClick={() => setQuery('')} className="p-1 text-xs text-text-secondary hover:text-text-primary font-mono cursor-pointer">
               Clear
             </button>
           )}
-          <button onClick={onClose} className="p-1 rounded text-[#7E3E3E] hover:text-[#2A0E0E] dark:hover:text-white">
+          <button onClick={onClose} className="p-1 rounded text-text-secondary hover:text-text-primary cursor-pointer" aria-label="Close search">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -139,7 +139,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
         {/* Results List */}
         <div className="max-h-80 overflow-y-auto p-2 space-y-1">
           {filteredItems.length === 0 ? (
-            <div className="py-8 text-center text-sm text-[#7E3E3E] dark:text-[#C9B29B]">
+            <div className="py-8 text-center text-sm text-text-secondary font-mono">
               No matching topics or tools found.
             </div>
           ) : (
@@ -150,44 +150,44 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose 
                   navigate(item.path);
                   onClose();
                 }}
-                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center justify-between transition-colors ${
+                className={`w-full text-left px-3.5 py-2.5 rounded-xl flex items-center justify-between transition-colors cursor-pointer ${
                   idx === selectedIndex
-                    ? 'bg-[#A82020] text-[#F3E6D5]'
-                    : 'hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] text-[#2A0E0E] dark:text-[#F3E6D5]'
+                    ? 'bg-surface border border-accent-primary/60 text-text-primary shadow-xs'
+                    : 'hover:bg-surface/60 border border-transparent text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <div className={`p-1.5 rounded-lg ${idx === selectedIndex ? 'bg-white/20' : 'bg-[#E2CEB9] dark:bg-[#3A1313]'}`}>
+                  <div className={`p-1.5 rounded-lg ${idx === selectedIndex ? 'bg-accent-primary/15' : 'bg-surface'}`}>
                     {getCategoryIcon(item.category)}
                   </div>
                   <div>
                     <div className="text-sm font-semibold flex items-center gap-2">
-                      <span>{item.title}</span>
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-bold tracking-wider ${
-                        idx === selectedIndex ? 'bg-white/20 text-white' : 'bg-[#ECDCC8] dark:bg-[#2A0D0D] text-[#7E3E3E] dark:text-[#FBE6C2]'
+                      <span className={idx === selectedIndex ? 'text-accent-primary' : 'text-text-primary'}>{item.title}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded uppercase font-mono font-bold tracking-wider ${
+                        idx === selectedIndex ? 'bg-accent-primary/20 text-accent-primary' : 'bg-surface border border-border-subtle text-text-secondary'
                       }`}>
                         {item.category}
                       </span>
                     </div>
-                    <div className={`text-xs ${idx === selectedIndex ? 'text-white/80' : 'text-[#7E3E3E] dark:text-[#C9B29B]'}`}>
+                    <div className={`text-xs ${idx === selectedIndex ? 'text-text-primary/90' : 'text-text-secondary'}`}>
                       {item.description}
                     </div>
                   </div>
                 </div>
-                <ArrowRight className={`w-4 h-4 shrink-0 ${idx === selectedIndex ? 'text-white' : 'opacity-40'}`} />
+                <ArrowRight className={`w-4 h-4 shrink-0 ${idx === selectedIndex ? 'text-accent-primary' : 'opacity-40'}`} />
               </button>
             ))
           )}
         </div>
 
         {/* Footer shortcuts */}
-        <div className="px-4 py-2 bg-[#FBE6C2]/40 dark:bg-[#240909] border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20 flex items-center justify-between text-[11px] text-[#7E3E3E] dark:text-[#C9B29B]">
+        <div className="px-4 py-2.5 bg-surface border-t border-border-subtle flex items-center justify-between text-[11px] font-mono text-text-secondary">
           <div className="flex items-center gap-3">
             <span>↑↓ Navigate</span>
             <span>↵ Select</span>
             <span>Esc Close</span>
           </div>
-          <span>Ctrl+K to toggle</span>
+          <span className="text-accent-primary">Ctrl+K to toggle</span>
         </div>
       </div>
     </div>

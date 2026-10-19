@@ -49,65 +49,69 @@ export const SettingsPage: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8">
-      <div className="pb-6 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30 flex items-center justify-between">
+      <div className="pb-6 border-b border-border-subtle flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-border-subtle bg-surface text-[10px] font-mono uppercase tracking-wider text-accent-primary mb-2">
+            Environment & Node Configuration
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl font-black text-text-primary uppercase tracking-tight">
             System & Environment Settings
           </h1>
-          <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] mt-1">
+          <p className="text-xs text-text-secondary mt-1">
             Monitor local Ollama service, model artifacts, demo mode, and deployment administrative keys.
           </p>
         </div>
         <button
           onClick={loadStatus}
-          className="p-2 rounded-lg border border-[#6C1A1A]/30 dark:border-[#A82020]/40 hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] cursor-pointer"
+          className="p-2.5 rounded-xl border border-border-subtle bg-surface hover:bg-surface-elevated text-text-secondary hover:text-accent-primary transition-all cursor-pointer"
           title="Refresh system status"
+          aria-label="Refresh system status"
         >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-accent-primary' : ''}`} />
         </button>
       </div>
 
       {/* Model & Service Telemetry */}
-      <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-4">
-        <h2 className="font-bold text-sm uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2] flex items-center gap-2">
-          <Shield className="w-4 h-4 text-[#A82020]" />
+      <div className="p-6 rounded-2xl border border-border-subtle bg-surface space-y-4">
+        <h2 className="font-mono text-xs font-bold uppercase tracking-wider text-accent-primary flex items-center gap-2">
+          <Shield className="w-4 h-4" />
           <span>Local Service Health</span>
         </h2>
 
         {health ? (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-            <div className="p-3.5 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-[#7E3E3E] dark:text-[#C9B29B]">Backend API</span>
-              <div className="flex items-center gap-1.5 font-bold text-emerald-600 dark:text-emerald-400">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+            <div className="p-3.5 rounded-xl bg-surface-elevated border border-border-subtle/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-text-secondary">Backend API</span>
+              <div className="flex items-center gap-1.5 font-bold text-accent-secondary">
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Healthy (v{health.version})</span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-[#7E3E3E] dark:text-[#C9B29B]">Local Ollama</span>
+            <div className="p-3.5 rounded-xl bg-surface-elevated border border-border-subtle/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-text-secondary">Local Ollama</span>
               <div className="flex items-center gap-1.5 font-bold">
                 {health.ollama_status.reachable ? (
-                  <span className="text-emerald-600 flex items-center gap-1">
+                  <span className="text-accent-secondary flex items-center gap-1">
                     <CheckCircle2 className="w-4 h-4" /> Reachable
                   </span>
                 ) : (
-                  <span className="text-amber-600 flex items-center gap-1">
-                    <AlertCircle className="w-4 h-4" /> Offline / Not Running
+                  <span className="text-risk-warning flex items-center gap-1">
+                    <AlertCircle className="w-4 h-4" /> Offline / Standby
                   </span>
                 )}
               </div>
             </div>
 
-            <div className="p-3.5 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 space-y-1">
-              <span className="text-[10px] uppercase font-bold text-[#7E3E3E] dark:text-[#C9B29B]">ML Artifacts</span>
+            <div className="p-3.5 rounded-xl bg-surface-elevated border border-border-subtle/70 space-y-1">
+              <span className="text-[10px] uppercase font-bold text-text-secondary">ML Artifacts</span>
               <div className="font-bold">
                 {health.models_status.message_classifier.trained && health.models_status.url_classifier.trained ? (
-                  <span className="text-emerald-600 flex items-center gap-1">
+                  <span className="text-accent-secondary flex items-center gap-1">
                     <CheckCircle2 className="w-4 h-4" /> Both Models Loaded
                   </span>
                 ) : (
-                  <span className="text-amber-600 flex items-center gap-1">
+                  <span className="text-risk-warning flex items-center gap-1">
                     <AlertCircle className="w-4 h-4" /> Pending Training
                   </span>
                 )}
@@ -115,95 +119,99 @@ export const SettingsPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-800 dark:text-amber-200">
+          <div className="p-4 rounded-xl bg-risk-warning/10 border border-risk-warning/30 text-xs text-risk-warning font-mono">
             Backend API is unreachable at the configured URL. Check if <code>python -m backend.main</code> is running.
           </div>
         )}
       </div>
 
       {/* Demo Mode Toggle */}
-      <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 flex items-center justify-between">
+      <div className="p-6 rounded-2xl border border-border-subtle bg-surface flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h2 className="font-bold text-sm text-[#2A0E0E] dark:text-[#F3E6D5]">
+          <h2 className="font-bold text-sm text-text-primary">
             Explicit Demo Mode
           </h2>
-          <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] max-w-md mt-0.5">
+          <p className="text-xs text-text-secondary max-w-md mt-0.5">
             When enabled, clearly labelled "DEMO DATA" sample fixtures appear if the backend or models are offline.
           </p>
         </div>
         <button
           onClick={() => handleToggleDemo(!demoMode)}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            demoMode ? 'bg-[#A82020] text-white shadow-md' : 'bg-[#E2CEB9] dark:bg-[#3A1313] text-[#7E3E3E] dark:text-[#C9B29B]'
+          className={`px-4 py-2 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer ${
+            demoMode
+              ? 'bg-accent-primary text-[#080D18] shadow-md shadow-cyan-500/20'
+              : 'border border-border-subtle bg-surface-elevated text-text-secondary hover:text-text-primary'
           }`}
         >
           {demoMode ? 'Demo Mode Active' : 'Enable Demo Mode'}
         </button>
       </div>
 
-      {/* Admin Passphrase with Password Visibility Toggle (H.13) */}
-      <form onSubmit={handleSavePass} className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-3">
-        <h2 className="font-bold text-sm text-[#2A0E0E] dark:text-[#F3E6D5]">
-          Admin Action Passphrase
-        </h2>
-        <p className="text-xs text-[#5C2222] dark:text-[#C9B29B]">
-          Required for destructive operations (e.g., permanently deleting case records) on public deployments.
-        </p>
+      {/* Admin Passphrase with Password Visibility Toggle */}
+      <form onSubmit={handleSavePass} className="p-6 rounded-2xl border border-border-subtle bg-surface space-y-4">
+        <div>
+          <h2 className="font-bold text-sm text-text-primary">
+            Admin Action Passphrase
+          </h2>
+          <p className="text-xs text-text-secondary mt-0.5">
+            Required for destructive operations (e.g., permanently deleting case records) on public deployments.
+          </p>
+        </div>
         <div className="relative max-w-md">
           <input
             type={showPassword ? 'text' : 'password'}
             value={adminPass}
             onChange={(e) => setAdminPass(e.target.value)}
             placeholder="Enter passphrase configured in ADMIN_PASSPHRASE"
-            className="w-full px-3 py-2 pr-10 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs text-[#2A0E0E] dark:text-[#F3E6D5] focus:outline-none focus:ring-1 focus:ring-[#A82020]"
+            className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-border-subtle bg-surface-elevated text-xs font-mono text-text-primary placeholder-text-secondary focus:outline-none focus:ring-1 focus:ring-accent-primary/60"
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             aria-pressed={showPassword}
             aria-label={showPassword ? 'Hide passphrase' : 'Show passphrase'}
-            className="absolute right-2.5 top-2.5 text-[#7E3E3E] hover:text-[#2A0E0E] dark:hover:text-white"
+            className="absolute right-2.5 top-2.5 text-text-secondary hover:text-text-primary transition-colors cursor-pointer"
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
         </div>
         <button
           type="submit"
-          className="px-4 py-2 rounded-xl bg-[#6C1A1A] hover:bg-[#A82020] text-[#F3E6D5] text-xs font-bold transition-colors cursor-pointer"
+          className="px-4 py-2 rounded-xl bg-accent-primary hover:bg-accent-primary/90 text-[#080D18] text-xs font-mono font-bold transition-all cursor-pointer shadow-sm hover:shadow-cyan-500/20"
         >
           Save Passphrase
         </button>
       </form>
 
       {/* Reset Settings Button */}
-      <div className="pt-4 flex justify-end">
+      <div className="pt-2 flex justify-end">
         <button
           type="button"
           onClick={() => setShowResetModal(true)}
-          className="text-xs text-red-600 hover:underline cursor-pointer"
+          className="text-xs text-risk-high hover:underline font-mono cursor-pointer"
         >
           Reset All Stored Settings to Default
         </button>
       </div>
 
-      {/* Confirmation Modal (H.17) */}
+      {/* Confirmation Modal */}
       {showResetModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" role="dialog" aria-modal="true">
-          <div className="w-full max-w-sm rounded-2xl border border-red-500 bg-[#F3E6D5] dark:bg-[#1A0707] p-6 shadow-2xl space-y-4">
-            <h3 className="font-bold text-base text-red-600">Reset All Settings?</h3>
-            <p className="text-xs text-[#5C2222] dark:text-[#C9B29B]">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs" role="dialog" aria-modal="true">
+          <div className="w-full max-w-sm rounded-2xl border border-risk-high/30 bg-surface-elevated p-6 shadow-2xl space-y-4">
+            <h3 className="font-display font-bold text-base text-risk-high">Reset All Settings?</h3>
+            <p className="text-xs text-text-secondary leading-relaxed">
               This will clear your local admin keys, theme preferences, and demo mode flags from browser storage.
             </p>
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => setShowResetModal(false)}
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D]"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-text-secondary hover:text-text-primary hover:bg-surface border border-border-subtle transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleResetSettings}
-                className="px-4 py-1.5 rounded-lg bg-red-600 text-white text-xs font-bold shadow-md hover:bg-red-700 cursor-pointer"
+                className="px-4 py-1.5 rounded-lg bg-risk-high text-[#080D18] text-xs font-bold shadow-md hover:bg-risk-high/90 cursor-pointer transition-colors"
               >
                 Confirm Reset
               </button>

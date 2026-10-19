@@ -2,11 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import {
   ShieldAlert, CheckCircle2, Copy, Printer, Sparkles, Send, Loader2,
-  AlertTriangle, Globe, Check, ArrowRight
+  AlertTriangle, Globe, Check, ArrowRight, ShieldCheck, Terminal
 } from 'lucide-react';
 import { createInvestigation, fetchInvestigationById } from '../services/api';
 import type { Investigation } from '../types';
 import { useToast } from '../components/common/Toast';
+import { SeverityChip } from '../components/ui/SeverityChip';
+import { Button } from '../components/ui/Button';
+import { Badge } from '../components/ui/Badge';
 
 const EXAMPLE_MESSAGES = [
   {
@@ -32,7 +35,7 @@ const EXAMPLE_MESSAGES = [
 ];
 
 const ANALYSIS_STAGES = [
-  "Sanitizing input & verifying boundaries...",
+  "Sanitizing input & verifying structural boundaries...",
   "Running calibrated TF-IDF message classifier...",
   "Computing offline lexical URL entropy & structure...",
   "Extracting forensic deception spans & authority cues...",
@@ -50,12 +53,15 @@ export const NewInvestigation: React.FC = () => {
   const [investigation, setInvestigation] = useState<Investigation | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [hoveredEvidenceId, setHoveredEvidenceId] = useState<string | null>(null);
 
   const { showToast } = useToast();
 
-  // Load by ID if provided in query string
+  // Load by ID or pre-fill from query string
   useEffect(() => {
     const id = searchParams.get('id');
+    const textParam = searchParams.get('text');
+
     if (id) {
       const loadById = async () => {
         setIsLoading(true);
@@ -71,6 +77,8 @@ export const NewInvestigation: React.FC = () => {
         }
       };
       loadById();
+    } else if (textParam) {
+      setInputText(textParam);
     }
   }, [searchParams]);
 
@@ -82,10 +90,9 @@ export const NewInvestigation: React.FC = () => {
     setError(null);
     setStageIndex(0);
 
-    // Progress stepper animation
     const interval = setInterval(() => {
       setStageIndex((prev) => (prev < ANALYSIS_STAGES.length - 1 ? prev + 1 : prev));
-    }, 350);
+    }, 320);
 
     try {
       const result = await createInvestigation({
@@ -98,7 +105,7 @@ export const NewInvestigation: React.FC = () => {
       showToast('Forensic analysis completed', 'success');
     } catch (err: any) {
       clearInterval(interval);
-      setError(err.message || 'Investigation failed. Check that backend API is running.');
+      setError(err.message || 'Investigation failed. Check backend connection.');
       showToast('Analysis error occurred', 'error');
     } finally {
       setIsLoading(false);
@@ -117,10 +124,14 @@ export const NewInvestigation: React.FC = () => {
     window.print();
   };
 
-  // Helper to render text with highlighted evidence spans
+  // Helper to render text with bidirectional highlighted evidence spans
   const renderHighlightedText = () => {
     if (!investigation || !investigation.evidence.length) {
-      return <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{investigation?.input_text || inputText}</p>;
+      return (
+        <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-[var(--text-primary)]">
+          {investigation?.input_text || inputText}
+        </p>
+      );
     }
 
     const text = investigation.input_text;
@@ -129,7 +140,11 @@ export const NewInvestigation: React.FC = () => {
       .sort((a, b) => (a.start_idx! - b.start_idx!));
 
     if (!spansWithIndices.length) {
-      return <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{text}</p>;
+      return (
+        <p className="font-mono text-xs leading-relaxed whitespace-pre-wrap text-[var(--text-primary)]">
+          {text}
+        </p>
+      );
     }
 
     const elements: React.ReactNode[] = [];
@@ -139,20 +154,33 @@ export const NewInvestigation: React.FC = () => {
       const start = ev.start_idx!;
       const end = ev.end_idx!;
 
-      // Handle non-overlapping slices
       if (start >= lastIdx && start < text.length) {
         if (start > lastIdx) {
-          elements.push(text.slice(lastIdx, start));
+          elements.push(
+            <span key={`plain-${lastIdx}`} className="text-[var(--text-primary)]">
+              {text.slice(lastIdx, start)}
+            </span>
+          );
         }
         const slice = text.slice(start, Math.min(end, text.length));
         const isProtective = ev.type === 'protective_disclaimer';
+        const isHovered = hoveredEvidenceId === ev.id;
+
         elements.push(
           <mark
-            key={i}
-            className={`px-1.5 py-0.5 rounded text-xs font-bold transition-colors ${
+            key={`mark-${ev.id || i}`}
+            onMouseEnter={() => setHoveredEvidenceId(ev.id)}
+            onMouseLeave={() => setHoveredEvidenceId(null)}
+            className={`px-1.5 py-0.5 rounded font-mono text-xs font-bold cursor-pointer transition-all duration-150 ${
+              isHovered
+                ? 'ring-2 ring-[var(--accent-primary)] shadow-[0_0_15px_rgba(34,211,238,0.5)] z-10'
+                : ''
+            } ${
               isProtective
-                ? 'bg-teal-500/20 text-teal-800 dark:text-teal-200 border border-teal-500/40'
-                : 'bg-red-500/20 text-red-900 dark:text-red-200 border border-red-500/40'
+                ? 'bg-[#2DD4BF]/20 text-[#2DD4BF] border-b-2 border-[#2DD4BF]'
+                : ev.severity === 'high'
+                ? 'bg-[#F87171]/25 text-[#F87171] border-b-2 border-[#F87171]'
+                : 'bg-[#FBBF24]/25 text-[#FBBF24] border-b-2 border-[#FBBF24]'
             }`}
             title={`${ev.type}: ${ev.explanation}`}
           >
@@ -164,7 +192,11 @@ export const NewInvestigation: React.FC = () => {
     });
 
     if (lastIdx < text.length) {
-      elements.push(text.slice(lastIdx));
+      elements.push(
+        <span key="plain-end" className="text-[var(--text-primary)]">
+          {text.slice(lastIdx)}
+        </span>
+      );
     }
 
     return <div className="font-mono text-xs leading-relaxed whitespace-pre-wrap">{elements}</div>;
@@ -172,21 +204,27 @@ export const NewInvestigation: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-8">
-      {/* Top Header & Quick Actions */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[#6C1A1A]/20 dark:border-[#A82020]/30">
+      {/* Top Header & Actions */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-[var(--border-subtle)]">
         <div>
-          <div className="flex items-center gap-2">
-            <h1 className="font-display text-3xl font-black text-[#6C1A1A] dark:text-[#F3E6D5] uppercase tracking-tight">
-              Evidence Analyzer Workspace
+          <div className="flex items-center gap-2 mb-1">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-primary)] animate-pulse" />
+            <span className="text-[11px] font-mono font-bold tracking-widest uppercase text-[var(--accent-primary)]">
+              FORENSIC INVESTIGATION WORKSPACE
+            </span>
+          </div>
+          <div className="flex items-center gap-3">
+            <h1 className="font-display text-3xl sm:text-4xl font-extrabold text-[var(--text-primary)] uppercase tracking-tight">
+              Evidence Analyzer
             </h1>
             {investigation?.is_demo && (
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-purple-700 text-white uppercase tracking-wider">
+              <Badge variant="warning" size="sm">
                 DEMO DATA
-              </span>
+              </Badge>
             )}
           </div>
-          <p className="text-xs text-[#5C2222] dark:text-[#C9B29B] mt-1">
-            Deconstruct deceptive lures, extract psychological manipulation spans, analyze offline URLs, and inspect verified indicators.
+          <p className="text-xs text-[var(--text-secondary)] mt-1 font-sans">
+            Deconstruct deceptive lures, extract psychological pressure spans, inspect offline lexical indicators, and generate mitigation playbooks.
           </p>
         </div>
 
@@ -194,14 +232,14 @@ export const NewInvestigation: React.FC = () => {
           <div className="flex items-center gap-2 no-print">
             <button
               onClick={handleCopySummary}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#6C1A1A]/30 dark:border-[#A82020]/40 text-xs font-semibold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] text-xs font-mono font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40 hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
             >
-              {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+              {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
               <span>{copied ? 'Copied' : 'Copy Summary'}</span>
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[#6C1A1A]/30 dark:border-[#A82020]/40 text-xs font-semibold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] transition-colors cursor-pointer"
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] text-xs font-mono font-semibold text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40 hover:bg-[var(--surface-elevated)] transition-all cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
               <span>Print / PDF</span>
@@ -210,23 +248,26 @@ export const NewInvestigation: React.FC = () => {
         )}
       </div>
 
-      {/* Main 3-Column Layout (ref3 incident command workspace) */}
+      {/* Main 3-Column Incident Command Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left Column: Input Form & Test Scenarios (5 cols) */}
+        {/* Left Column: Input Form (5 cols) */}
         <div className="lg:col-span-5 space-y-6 no-print">
-          <form onSubmit={handleRunInvestigation} className="rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 p-6 space-y-4 shadow-sm">
+          <form
+            onSubmit={handleRunInvestigation}
+            className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] p-6 space-y-4 shadow-lg"
+          >
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
-                1. Provide Suspicious Lure
+              <h2 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">
+                1. Suspicious Input Data
               </h2>
-              <span className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B]">
-                Untrusted Input Protected
+              <span className="text-[10px] font-mono text-[var(--text-secondary)]">
+                Zero Network Leaks
               </span>
             </div>
 
             {/* Quick Test Presets */}
             <div>
-              <label className="block text-[11px] font-bold text-[#7E3E3E] dark:text-[#C9B29B] uppercase mb-1">
+              <label className="block text-[11px] font-mono font-semibold text-[var(--text-secondary)] uppercase mb-1">
                 Load Preset Test Fixture:
               </label>
               <select
@@ -239,7 +280,7 @@ export const NewInvestigation: React.FC = () => {
                   }
                 }}
                 defaultValue=""
-                className="w-full px-3 py-2 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs text-[#2A0E0E] dark:text-[#F3E6D5] focus:outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--background-secondary)] text-xs font-sans text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
               >
                 <option value="" disabled>Select a realistic test lure...</option>
                 {EXAMPLE_MESSAGES.map((ex, i) => (
@@ -251,10 +292,10 @@ export const NewInvestigation: React.FC = () => {
             {/* Textarea */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="text-[11px] font-bold text-[#7E3E3E] dark:text-[#C9B29B] uppercase">
-                  Raw Message Body (SMS / WhatsApp / Email):
+                <label className="text-[11px] font-mono font-semibold text-[var(--text-secondary)] uppercase">
+                  Raw Message Body:
                 </label>
-                <span className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B]">
+                <span className="text-[10px] font-mono text-[var(--text-secondary)]">
                   {inputText.length} / 15,000
                 </span>
               </div>
@@ -264,13 +305,13 @@ export const NewInvestigation: React.FC = () => {
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 placeholder="Paste the suspicious SMS, WhatsApp notice, account alert, or job offer here..."
-                className="w-full px-3.5 py-2.5 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs text-[#2A0E0E] dark:text-[#F3E6D5] focus:outline-none focus:ring-1 focus:ring-[#A82020] resize-y"
+                className="w-full p-3.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--background-secondary)] text-xs font-mono text-[var(--text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] resize-y"
               />
             </div>
 
             {/* Optional URL */}
             <div>
-              <label className="block text-[11px] font-bold text-[#7E3E3E] dark:text-[#C9B29B] uppercase mb-1">
+              <label className="block text-[11px] font-mono font-semibold text-[var(--text-secondary)] uppercase mb-1">
                 Embedded Link / Domain (Optional):
               </label>
               <div className="relative">
@@ -279,26 +320,27 @@ export const NewInvestigation: React.FC = () => {
                   value={urlInput}
                   onChange={(e) => setUrlInput(e.target.value)}
                   placeholder="http://suspect-portal.top/login"
-                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs text-[#2A0E0E] dark:text-[#F3E6D5] focus:outline-none focus:ring-1 focus:ring-[#A82020]"
+                  className="w-full pl-8 pr-3 py-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--background-secondary)] text-xs font-mono text-[var(--text-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)]"
                 />
-                <Globe className="w-3.5 h-3.5 text-[#7E3E3E] dark:text-[#C9B29B] absolute left-2.5 top-2.5" />
+                <Globe className="w-3.5 h-3.5 text-[var(--text-secondary)] absolute left-2.5 top-2.5" />
               </div>
-              <p className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B] mt-1">
-                🛡️ <strong>Zero-Fetch Guarantee:</strong> The link is never fetched, resolved, or requested. Evaluated solely via local lexical math.
+              <p className="text-[10px] font-mono text-[var(--text-secondary)] mt-1.5 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-emerald-400 shrink-0" />
+                <span>Zero-Fetch Guarantee: URL analyzed purely via local lexical math.</span>
               </p>
             </div>
 
             {/* Gemma AI Report Option */}
-            <div className="flex items-center gap-2 pt-1 border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20">
+            <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-subtle)]">
               <input
                 type="checkbox"
                 id="gemma-opt"
                 checked={includeAiReport}
                 onChange={(e) => setIncludeAiReport(e.target.checked)}
-                className="rounded accent-[#A82020] w-4 h-4 cursor-pointer"
+                className="rounded accent-[var(--accent-primary)] w-4 h-4 cursor-pointer"
               />
-              <label htmlFor="gemma-opt" className="text-xs text-[#2A0E0E] dark:text-[#F3E6D5] cursor-pointer flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#C27803]" />
+              <label htmlFor="gemma-opt" className="text-xs text-[var(--text-primary)] cursor-pointer flex items-center gap-1.5 font-sans">
+                <Sparkles className="w-3.5 h-3.5 text-[var(--accent-primary)]" />
                 <span>Request Local Gemma 4 Analytical Report</span>
               </label>
             </div>
@@ -308,55 +350,48 @@ export const NewInvestigation: React.FC = () => {
               <button
                 type="button"
                 onClick={() => { setInputText(''); setUrlInput(''); setInvestigation(null); }}
-                className="text-xs text-[#7E3E3E] dark:text-[#C9B29B] hover:underline"
+                className="text-xs font-mono text-[var(--text-secondary)] hover:text-[var(--text-primary)] underline cursor-pointer"
               >
                 Clear Form
               </button>
-              <button
+              <Button
                 type="submit"
+                variant="primary"
+                size="sm"
                 disabled={isLoading || !inputText.trim()}
-                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#A82020] hover:bg-[#8C1919] text-[#F3E6D5] font-bold text-xs shadow-md disabled:opacity-50 transition-all cursor-pointer"
+                loading={isLoading}
+                icon={<Send className="w-4 h-4" />}
               >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Analyzing...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-4 h-4" />
-                    <span>Expose Evidence</span>
-                  </>
-                )}
-              </button>
+                Expose Evidence
+              </Button>
             </div>
           </form>
 
-          {/* Progress Stage Indicator during loading (Rule H.6) */}
+          {/* Progress Stage Indicator during loading */}
           {isLoading && (
-            <div className="p-5 rounded-2xl border border-[#A82020]/40 bg-[#FBE6C2]/40 dark:bg-[#2A0D0D]/60 space-y-3 animate-pulse">
-              <div className="flex items-center justify-between text-xs font-bold text-[#A82020] dark:text-[#FBE6C2]">
+            <div className="p-5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] space-y-3 shadow-lg">
+              <div className="flex items-center justify-between text-xs font-mono font-bold text-[var(--accent-primary)]">
                 <span className="flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin text-[#A82020]" />
-                  <span>Processing Forensic Stage {stageIndex + 1} of {ANALYSIS_STAGES.length}</span>
+                  <Loader2 className="w-4 h-4 animate-spin text-[var(--accent-primary)]" />
+                  <span>Processing Stage {stageIndex + 1} of {ANALYSIS_STAGES.length}</span>
                 </span>
                 <span>{Math.round(((stageIndex + 1) / ANALYSIS_STAGES.length) * 100)}%</span>
               </div>
-              <div className="w-full bg-[#E2CEB9] dark:bg-[#3A1313] h-1.5 rounded-full overflow-hidden">
+              <div className="w-full bg-[var(--background)] h-1.5 rounded-full overflow-hidden">
                 <div
-                  className="bg-[#A82020] h-full transition-all duration-300"
+                  className="bg-[var(--accent-primary)] shadow-[0_0_8px_var(--accent-primary)] h-full transition-all duration-300"
                   style={{ width: `${((stageIndex + 1) / ANALYSIS_STAGES.length) * 100}%` }}
                 />
               </div>
-              <p className="text-[11px] font-mono text-[#5C2222] dark:text-[#C9B29B]">
+              <p className="text-[11px] font-mono text-[var(--text-secondary)]">
                 {ANALYSIS_STAGES[stageIndex]}
               </p>
             </div>
           )}
 
           {error && (
-            <div className="p-4 rounded-xl border border-red-400 bg-red-100/70 dark:bg-red-950/40 text-xs text-red-900 dark:text-red-200 flex items-start gap-2">
-              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-red-600" />
+            <div className="p-4 rounded-xl border border-red-500/30 bg-red-950/40 text-xs text-red-200 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
               <span>{error}</span>
             </div>
           )}
@@ -365,67 +400,60 @@ export const NewInvestigation: React.FC = () => {
         {/* Right Columns: Structured Findings & Incident Playbook (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
           {!investigation ? (
-            <div className="rounded-2xl border border-dashed border-[#6C1A1A]/30 dark:border-[#A82020]/40 p-12 text-center flex flex-col items-center justify-center space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-[#A82020]/10 flex items-center justify-center text-[#A82020]">
+            <div className="rounded-2xl border border-dashed border-[var(--border-subtle)] p-12 text-center flex flex-col items-center justify-center space-y-3 bg-[var(--surface)]/30">
+              <div className="w-12 h-12 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-subtle)] flex items-center justify-center text-[var(--accent-primary)]">
                 <ShieldAlert className="w-6 h-6" />
               </div>
-              <h3 className="font-bold text-base text-[#2A0E0E] dark:text-[#F3E6D5]">
+              <h3 className="font-display font-bold text-base text-[var(--text-primary)]">
                 Awaiting Evidence Input
               </h3>
-              <p className="text-xs text-[#7E3E3E] dark:text-[#C9B29B] max-w-sm">
-                Paste a suspicious message or choose one of the preset example lures on the left to trigger the analysis engine.
+              <p className="text-xs text-[var(--text-secondary)] max-w-sm font-sans">
+                Paste a suspicious message or choose one of the preset example lures on the left to trigger the forensic engine.
               </p>
             </div>
           ) : (
             <div className="investigation-report-container space-y-6">
               {/* Threat Tier & Risk Gauge */}
-              <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/40 dark:bg-[#2A0D0D]/60 space-y-4">
+              <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-lg space-y-4">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
-                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                    <span className="text-[10px] font-mono uppercase font-bold tracking-wider text-[var(--text-secondary)]">
                       Forensic Threat Assessment
                     </span>
-                    <div className="flex items-center gap-3 mt-1">
-                      <span className={`text-xl font-black uppercase px-3 py-1 rounded-xl shadow-sm ${
-                        investigation.risk_level === 'High concern'
-                          ? 'bg-red-500 text-white'
-                          : investigation.risk_level === 'Suspicious'
-                          ? 'bg-amber-500 text-white'
-                          : 'bg-teal-600 text-white'
-                      }`}>
-                        {investigation.risk_level}
-                      </span>
-                      <div className="text-xs font-mono font-bold">
-                        Risk Index: <span className="text-base font-black text-[#A82020] dark:text-[#E04848]">{investigation.risk_score.toFixed(1)}</span>/100
-                      </div>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <SeverityChip
+                        level={investigation.risk_level}
+                        score={investigation.risk_score}
+                        size="lg"
+                      />
                     </div>
                   </div>
 
                   <Link
                     to={`/graph?investigation_id=${investigation.id}`}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#6C1A1A]/30 dark:border-[#A82020]/40 text-xs font-bold hover:bg-[#FBE6C2] dark:hover:bg-[#2A0D0D] no-print"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border border-[var(--border-subtle)] bg-[var(--surface-elevated)] text-xs font-mono font-bold text-[var(--accent-primary)] hover:bg-[var(--surface)] transition-all no-print"
                   >
                     <span>View in Entity Graph</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
 
-                <p className="text-xs text-[#2A0E0E] dark:text-[#F3E6D5] leading-relaxed pt-2 border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20">
+                <p className="text-xs text-[var(--text-secondary)] leading-relaxed pt-3 border-t border-[var(--border-subtle)] font-sans">
                   {investigation.risk_rationale}
                 </p>
               </div>
 
               {/* Message Span Inspector with Highlights */}
-              <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/20 dark:bg-[#2A0D0D]/30 space-y-3">
+              <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-lg space-y-3">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
+                  <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">
                     Deconstructive Span Analysis
                   </h3>
-                  <span className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B]">
-                    Color-Coded Forensic Highlights
+                  <span className="text-[10px] font-mono text-[var(--text-secondary)]">
+                    Hover chips below or text to inspect connections
                   </span>
                 </div>
-                <div className="p-4 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10">
+                <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border-subtle)]">
                   {renderHighlightedText()}
                 </div>
               </div>
@@ -433,139 +461,166 @@ export const NewInvestigation: React.FC = () => {
               {/* Model Decision Breakdown & Lexical URL Telemetry */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Message Classifier */}
-                <div className="p-4 rounded-xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-2 text-xs">
-                  <div className="font-bold uppercase text-[11px] text-[#6C1A1A] dark:text-[#FBE6C2]">
-                    Message Classifier (TF-IDF LR)
+                <div className="p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] space-y-2 text-xs font-mono">
+                  <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-1.5">
+                    <span className="font-bold uppercase text-[11px] text-[var(--accent-primary)]">
+                      Message Classifier (TF-IDF LR)
+                    </span>
+                    <Terminal className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
                   </div>
                   {investigation.message_prediction ? (
-                    <div className="space-y-1">
-                      <div>
-                        Class: <strong className="font-mono">{investigation.message_prediction.predicted_class}</strong>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between">
+                        <span className="text-[var(--text-secondary)]">Class:</span>
+                        <strong className="text-[var(--text-primary)] uppercase">{investigation.message_prediction.predicted_class}</strong>
                       </div>
-                      <div>
-                        Calibrated Probability: <strong className="font-mono">{(investigation.message_prediction.score * 100).toFixed(1)}%</strong>
+                      <div className="flex justify-between">
+                        <span className="text-[var(--text-secondary)]">Calibrated Probability:</span>
+                        <strong className="text-[var(--accent-primary)]">{(investigation.message_prediction.score * 100).toFixed(1)}%</strong>
                       </div>
-                      <div className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B]">
+                      <div className="text-[10px] text-[var(--text-secondary)] pt-1 border-t border-[var(--border-subtle)]">
                         Active features: {investigation.message_prediction.features_used.join(', ') || 'N/A'}
                       </div>
                     </div>
                   ) : (
-                    <span className="text-[#7E3E3E]">Model prediction unavailable.</span>
+                    <span className="text-[var(--text-secondary)]">Model prediction unavailable.</span>
                   )}
                 </div>
 
                 {/* URL Classifier */}
-                <div className="p-4 rounded-xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-2 text-xs">
-                  <div className="font-bold uppercase text-[11px] text-[#6C1A1A] dark:text-[#FBE6C2]">
-                    Lexical URL Classifier (Offline RF)
+                <div className="p-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface)] space-y-2 text-xs font-mono">
+                  <div className="flex items-center justify-between border-b border-[var(--border-subtle)] pb-1.5">
+                    <span className="font-bold uppercase text-[11px] text-[var(--accent-secondary)]">
+                      Lexical URL Classifier (Offline RF)
+                    </span>
+                    <Globe className="w-3.5 h-3.5 text-[var(--text-secondary)]" />
                   </div>
                   {investigation.url_prediction ? (
-                    <div className="space-y-1">
-                      <div>
-                        Class: <strong className="font-mono">{investigation.url_prediction.predicted_class}</strong>
+                    <div className="space-y-1.5">
+                      <div className="flex justify-between">
+                        <span className="text-[var(--text-secondary)]">Class:</span>
+                        <strong className="text-[var(--text-primary)] uppercase">{investigation.url_prediction.predicted_class}</strong>
                       </div>
-                      <div>
-                        Decision Score: <strong className="font-mono">{(investigation.url_prediction.score * 100).toFixed(1)}%</strong>
+                      <div className="flex justify-between">
+                        <span className="text-[var(--text-secondary)]">Decision Score:</span>
+                        <strong className="text-[var(--accent-secondary)]">{(investigation.url_prediction.score * 100).toFixed(1)}%</strong>
                       </div>
-                      <div className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B]">
+                      <div className="text-[10px] text-[var(--text-secondary)] pt-1 border-t border-[var(--border-subtle)]">
                         Features: {investigation.url_prediction.features_used.join(', ') || 'N/A'}
                       </div>
                     </div>
                   ) : (
-                    <span className="text-[#7E3E3E]">No external URL was provided for analysis.</span>
+                    <span className="text-[var(--text-secondary)]">No external URL was provided for analysis.</span>
                   )}
                 </div>
               </div>
 
-              {/* Extracted Forensic Evidence Items */}
-              <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/20 dark:bg-[#2A0D0D]/30 space-y-4">
-                <h3 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
-                  Extracted Indicators & Patterns ({investigation.evidence.length})
-                </h3>
+              {/* Extracted Forensic Evidence Items (With Bidirectional Hover) */}
+              <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-lg space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">
+                    Extracted Indicators & Patterns ({investigation.evidence.length})
+                  </h3>
+                  <span className="text-[10px] font-mono text-[var(--text-secondary)]">
+                    Interactive Evidence Cards
+                  </span>
+                </div>
                 <div className="space-y-2.5">
-                  {investigation.evidence.map((ev) => (
-                    <div key={ev.id} className="p-3.5 rounded-xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#F3E6D5] dark:bg-[#1A0707] text-xs space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="font-mono font-bold text-[#A82020] dark:text-[#E04848] uppercase">
-                          {ev.type.replace(/_/g, ' ')}
-                        </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#E2CEB9] dark:bg-[#3A1313] font-bold">
-                          Severity: {ev.severity}
-                        </span>
+                  {investigation.evidence.map((ev) => {
+                    const isHovered = hoveredEvidenceId === ev.id;
+                    return (
+                      <div
+                        key={ev.id}
+                        onMouseEnter={() => setHoveredEvidenceId(ev.id)}
+                        onMouseLeave={() => setHoveredEvidenceId(null)}
+                        className={`p-3.5 rounded-xl border text-xs space-y-1 transition-all duration-150 cursor-pointer ${
+                          isHovered
+                            ? 'bg-[var(--surface-elevated)] border-[var(--accent-primary)] shadow-[0_0_15px_rgba(34,211,238,0.2)]'
+                            : 'bg-[var(--background-secondary)] border-[var(--border-subtle)]'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono font-bold text-[var(--accent-primary)] uppercase">
+                            {ev.type.replace(/_/g, ' ')}
+                          </span>
+                          <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[var(--surface)] border border-[var(--border-subtle)] text-[var(--text-secondary)] font-semibold">
+                            Severity: {ev.severity}
+                          </span>
+                        </div>
+                        <div className="font-semibold text-[var(--text-primary)] font-mono">
+                          Matched: "{ev.matched_text}"
+                        </div>
+                        <p className="text-[var(--text-secondary)] text-[11px] font-sans">
+                          {ev.explanation}
+                        </p>
                       </div>
-                      <div className="font-semibold text-[#2A0E0E] dark:text-white">
-                        Matched: "{ev.matched_text}"
-                      </div>
-                      <p className="text-[#5C2222] dark:text-[#C9B29B] text-[11px]">
-                        {ev.explanation}
-                      </p>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* Actionable User Safety Playbook (ref3 inspired) */}
-              <div className="p-6 rounded-2xl border border-[#1E6E60]/40 bg-teal-500/10 dark:bg-teal-950/20 space-y-4">
+              {/* Actionable User Safety Playbook */}
+              <div className="p-6 rounded-2xl border border-teal-500/30 bg-teal-950/20 shadow-lg space-y-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-teal-800 dark:text-teal-300 font-bold text-sm uppercase">
-                    <CheckCircle2 className="w-5 h-5 text-teal-600" />
+                  <div className="flex items-center gap-2 text-teal-400 font-display font-bold text-sm uppercase">
+                    <CheckCircle2 className="w-5 h-5 text-teal-400" />
                     <span>Personalized Safety Playbook</span>
                   </div>
-                  <span className="text-[10px] uppercase font-bold text-teal-700 dark:text-teal-400">
+                  <span className="text-[10px] font-mono uppercase font-bold text-teal-400">
                     Non-Retaliatory Defense
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-teal-600/20 space-y-1">
-                    <div className="font-bold text-teal-700 dark:text-teal-300">1. DO NOT ENGAGE</div>
-                    <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B]">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs font-sans">
+                  <div className="p-3.5 rounded-xl bg-[var(--surface)] border border-teal-500/20 space-y-1">
+                    <div className="font-bold text-teal-400 font-mono text-[11px]">1. DO NOT ENGAGE</div>
+                    <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
                       Do not click links, dial back provided numbers, or reply to confirm phone validity.
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-teal-600/20 space-y-1">
-                    <div className="font-bold text-teal-700 dark:text-teal-300">2. INDEPENDENT AUDIT</div>
-                    <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B]">
+                  <div className="p-3.5 rounded-xl bg-[var(--surface)] border border-teal-500/20 space-y-1">
+                    <div className="font-bold text-teal-400 font-mono text-[11px]">2. INDEPENDENT AUDIT</div>
+                    <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
                       Verify directly via official bank passbook, official banking app, or customer care phone number printed on your card.
                     </p>
                   </div>
-                  <div className="p-3 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-teal-600/20 space-y-1">
-                    <div className="font-bold text-teal-700 dark:text-teal-300">3. OFFICIAL REPORTING</div>
-                    <p className="text-[11px] text-[#5C2222] dark:text-[#C9B29B]">
-                      Report cyber threats in India by dialing <strong>1930</strong> or visiting <strong>cybercrime.gov.in</strong>.
+                  <div className="p-3.5 rounded-xl bg-[var(--surface)] border border-teal-500/20 space-y-1">
+                    <div className="font-bold text-teal-400 font-mono text-[11px]">3. OFFICIAL REPORTING</div>
+                    <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
+                      Report cyber threats in India by dialing <strong className="text-[var(--text-primary)]">1930</strong> or visiting <strong className="text-[var(--text-primary)]">cybercrime.gov.in</strong>.
                     </p>
                   </div>
                 </div>
               </div>
 
               {/* Local Gemma 4 Analytical Report */}
-              <div className="p-6 rounded-2xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-4">
+              <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-lg space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#C27803]" />
-                    <h3 className="font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
-                      EXPLANATORY AI (Gemma 4)
+                    <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
+                    <h3 className="font-display font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">
+                      Explanatory AI Report (Local Gemma 4)
                     </h3>
                   </div>
                   {investigation.gemma_report && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#6C1A1A]/10 text-[#6C1A1A] dark:text-[#FBE6C2] font-mono">
+                    <span className="text-[10px] px-2 py-0.5 rounded-full bg-[var(--surface-elevated)] border border-[var(--border-subtle)] text-[var(--accent-primary)] font-mono">
                       {investigation.gemma_report.model_identifier}
                     </span>
                   )}
                 </div>
 
                 {investigation.gemma_report ? (
-                  <div className="space-y-4 text-xs text-[#2A0E0E] dark:text-[#F3E6D5]">
-                    <div className="p-3.5 rounded-xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/10 italic font-medium leading-relaxed">
+                  <div className="space-y-4 text-xs text-[var(--text-primary)] font-sans">
+                    <div className="p-3.5 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-subtle)] italic font-medium leading-relaxed text-[var(--text-primary)]">
                       "{investigation.gemma_report.summary || investigation.gemma_report.executive_summary}"
                     </div>
 
                     {investigation.gemma_report.threat_narrative && (
                       <div className="space-y-1">
-                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                        <strong className="block text-[11px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
                           Threat Narrative:
                         </strong>
-                        <p className="text-xs leading-relaxed opacity-90">
+                        <p className="text-xs leading-relaxed text-[var(--text-secondary)]">
                           {investigation.gemma_report.threat_narrative}
                         </p>
                       </div>
@@ -573,12 +628,12 @@ export const NewInvestigation: React.FC = () => {
 
                     {investigation.gemma_report.psychological_mechanisms && investigation.gemma_report.psychological_mechanisms.length > 0 && (
                       <div className="space-y-1.5">
-                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                        <strong className="block text-[11px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
                           Psychological Mechanisms:
                         </strong>
                         <div className="flex flex-wrap gap-1.5">
                           {investigation.gemma_report.psychological_mechanisms.map((mech, i) => (
-                            <span key={i} className="px-2 py-0.5 rounded-md bg-[#6C1A1A]/10 dark:bg-[#FBE6C2]/10 text-[#6C1A1A] dark:text-[#FBE6C2] text-[11px] font-medium">
+                            <span key={i} className="px-2 py-0.5 rounded-md bg-[var(--surface-elevated)] border border-[var(--border-subtle)] text-[var(--accent-secondary)] text-[11px] font-mono">
                               {mech}
                             </span>
                           ))}
@@ -588,10 +643,10 @@ export const NewInvestigation: React.FC = () => {
 
                     {investigation.gemma_report.likely_next_steps && investigation.gemma_report.likely_next_steps.length > 0 && (
                       <div className="space-y-1">
-                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
+                        <strong className="block text-[11px] font-mono uppercase tracking-wider text-[var(--text-secondary)]">
                           Likely Next Steps:
                         </strong>
-                        <ul className="list-disc list-inside space-y-1">
+                        <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)]">
                           {investigation.gemma_report.likely_next_steps.map((step, i) => (
                             <li key={i}>{step}</li>
                           ))}
@@ -600,26 +655,26 @@ export const NewInvestigation: React.FC = () => {
                     )}
 
                     {investigation.gemma_report.educational_analogy && (
-                      <div className="p-3 rounded-xl bg-[#2A0E0E]/5 dark:bg-[#F3E6D5]/5 border border-[#6C1A1A]/10 text-xs">
-                        <strong className="block text-[11px] uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B] mb-1">
+                      <div className="p-3 rounded-xl bg-[var(--background)] border border-[var(--border-subtle)] text-xs">
+                        <strong className="block text-[11px] font-mono uppercase tracking-wider text-[var(--text-secondary)] mb-1">
                           Educational Analogy:
                         </strong>
-                        <p className="italic opacity-90">
+                        <p className="italic text-[var(--text-secondary)]">
                           {investigation.gemma_report.educational_analogy}
                         </p>
                       </div>
                     )}
 
-                    <div className="text-[10px] text-[#7E3E3E] dark:text-[#C9B29B] pt-2 border-t border-[#6C1A1A]/10">
+                    <div className="text-[10px] font-mono text-[var(--text-secondary)] pt-2 border-t border-[var(--border-subtle)]">
                       {investigation.gemma_report.disclaimer}
                     </div>
                   </div>
                 ) : (
-                  <div className="p-4 rounded-xl bg-[#E2CEB9]/50 dark:bg-[#3A1313]/50 text-xs text-[#7E3E3E] dark:text-[#C9B29B] space-y-1.5">
-                    <div className="font-bold text-[#A82020] dark:text-[#FBE6C2]">
+                  <div className="p-4 rounded-xl bg-[var(--surface-elevated)] border border-[var(--border-subtle)] text-xs text-[var(--text-secondary)] space-y-1.5 font-mono">
+                    <div className="font-bold text-[var(--accent-primary)]">
                       AI synthesis unavailable. Deterministic and model evidence above are fully functional.
                     </div>
-                    <p className="text-[11px] leading-relaxed">
+                    <p className="text-[11px] leading-relaxed font-sans">
                       ScamTrace AI prioritizes factual, deterministic extraction over generative hallucinations. Local Gemma 4 reports require an active local Ollama daemon (e.g. <code>ollama run gemma4:e2b</code>). All trained classifiers, extracted spans, and safety rules remain 100% active.
                     </p>
                   </div>

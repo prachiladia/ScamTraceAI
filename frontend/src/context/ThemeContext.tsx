@@ -15,17 +15,17 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('scamtrace_theme') as Theme;
-    return saved || 'system';
+    return saved || 'dark';
   });
 
-  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('light');
+  const [resolvedTheme, setResolvedTheme] = useState<ResolvedTheme>('dark');
 
   useEffect(() => {
     const root = document.documentElement;
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
     const applyTheme = () => {
-      let currentResolved: ResolvedTheme = 'light';
+      let currentResolved: ResolvedTheme = 'dark';
       if (theme === 'system') {
         currentResolved = mediaQuery.matches ? 'dark' : 'light';
       } else {
@@ -35,7 +35,9 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       setResolvedTheme(currentResolved);
       if (currentResolved === 'dark') {
         root.classList.add('dark');
+        root.classList.remove('light');
       } else {
+        root.classList.add('light');
         root.classList.remove('dark');
       }
     };

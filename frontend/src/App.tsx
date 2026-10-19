@@ -26,6 +26,7 @@ import { History } from './pages/History';
 import { ScamAcademy } from './pages/ScamAcademy';
 import { About } from './pages/About';
 import { SettingsPage } from './pages/Settings';
+import { Styleguide } from './pages/Styleguide';
 import { NotFound } from './pages/NotFound';
 
 export const App: React.FC = () => {
@@ -40,7 +41,7 @@ export const App: React.FC = () => {
     <ThemeProvider>
       <ToastProvider>
         <Router>
-          <div className="min-h-screen flex flex-col bg-[#F3E6D5] dark:bg-[#1A0707] text-[#2A0E0E] dark:text-[#F3E6D5] transition-colors duration-200">
+          <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--text-primary)] transition-colors duration-200">
             <SkipLink />
             <ScrollProgress />
             
@@ -71,6 +72,7 @@ export const App: React.FC = () => {
                 <Route path="/academy" element={<ScamAcademy />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/styleguide" element={<Styleguide />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>

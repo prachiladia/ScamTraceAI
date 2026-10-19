@@ -6,6 +6,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: 'sm' | 'md' | 'lg';
   loading?: boolean;
   icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -14,6 +15,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   loading = false,
   icon,
+  iconPosition = 'left',
   className = '',
   disabled,
   ...props
@@ -50,10 +52,13 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {loading ? (
         <Loader2 className="w-4 h-4 animate-spin text-current" />
-      ) : icon ? (
+      ) : icon && iconPosition === 'left' ? (
         <span className="shrink-0">{icon}</span>
       ) : null}
       <span>{children}</span>
+      {!loading && icon && iconPosition === 'right' && (
+        <span className="shrink-0">{icon}</span>
+      )}
     </button>
   );
 };

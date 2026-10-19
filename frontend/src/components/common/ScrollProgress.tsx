@@ -22,7 +22,7 @@ export const ScrollProgress: React.FC = () => {
       aria-hidden="true"
     >
       <div
-        className="h-full bg-[#A82020] transition-all duration-75 ease-out"
+        className="h-full bg-[var(--accent-primary)] shadow-[0_0_8px_rgba(34,211,238,0.8)] transition-all duration-75 ease-out"
         style={{ width: `${progress}%` }}
       />
     </div>

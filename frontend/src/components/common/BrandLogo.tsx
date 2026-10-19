@@ -92,7 +92,7 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
               AI
             </span>
           </div>
-          <span className="font-mono text-[9px] uppercase tracking-widest text-[#94A3B8] font-semibold mt-0.5">
+          <span className="hidden sm:block font-mono text-[9px] uppercase tracking-widest text-[#94A3B8] font-semibold mt-0.5">
             Threat Intelligence
           </span>
         </div>

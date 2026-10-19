@@ -4,32 +4,32 @@ interface MarqueeBannerProps {
   phrases?: string[];
   reverse?: boolean;
   speedSeconds?: number;
-  variant?: 'crimson' | 'peach';
+  variant?: 'cyan' | 'surface' | 'crimson' | 'peach';
 }
 
 const DEFAULT_PHRASES = [
-  'Real banks never ask for your OTP or UPI PIN',
-  'Urgency is a psychological coercion tactic, not an emergency',
-  'Verify the actual domain root, not just the sender display name',
-  'Law enforcement never demands digital payments or cryptocurrency wires',
-  'Never install remote desktop software (AnyDesk, TeamViewer) for parcel delivery',
-  'Legitimate lotteries do not ask for clearance fees to claim winnings',
-  'Dial 1930 immediately in India to freeze fraudulent transactions in transit',
+  'Real financial institutions never demand your OTP or UPI PIN',
+  'Urgency deadlines are psychological coercion tactics, not system alerts',
+  'Always verify the actual domain root, never trust caller or sender display headers',
+  'Law enforcement never demands digital payments or cryptocurrency deposits',
+  'Never install remote desktop tools (AnyDesk, TeamViewer) for delivery updates',
+  'Legitimate lotteries never require advance clearance taxes to receive funds',
+  'In India, call 1930 immediately to freeze fraudulent transactions in transit',
 ];
 
 export const MarqueeBanner: React.FC<MarqueeBannerProps> = ({
   phrases = DEFAULT_PHRASES,
   reverse = false,
   speedSeconds = 30,
-  variant = 'crimson',
+  variant = 'cyan',
 }) => {
-  // Duplicate list to achieve continuous loop
+  // Duplicate list to achieve continuous seamless loop
   const repeated = [...phrases, ...phrases];
 
-  const bgStyles =
-    variant === 'crimson'
-      ? 'bg-[#A82020] text-[#F3E6D5] border-y border-[#6C1A1A]'
-      : 'bg-[#FBE6C2] text-[#6C1A1A] border-y border-[#6C1A1A]/30 dark:bg-[#2A0D0D] dark:text-[#FBE6C2] dark:border-[#A82020]/40';
+  const isPrimary = variant === 'cyan' || variant === 'crimson';
+  const bgStyles = isPrimary
+    ? 'bg-[var(--surface-elevated)]/90 text-[var(--accent-primary)] border-y border-[var(--border-subtle)] shadow-[inset_0_1px_0_rgba(34,211,238,0.1)]'
+    : 'bg-[var(--surface)] text-[var(--text-secondary)] border-y border-[var(--border-subtle)]';
 
   return (
     <div
@@ -46,9 +46,15 @@ export const MarqueeBanner: React.FC<MarqueeBannerProps> = ({
         }}
       >
         {repeated.map((phrase, idx) => (
-          <div key={idx} className="flex items-center gap-4 text-xs font-mono font-bold tracking-wider uppercase shrink-0">
-            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-            <span>{phrase}</span>
+          <div key={idx} className="flex items-center gap-3 text-xs font-mono font-medium tracking-wider uppercase shrink-0">
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isPrimary ? 'bg-[var(--accent-primary)] shadow-[0_0_6px_var(--accent-primary)]' : 'bg-[var(--accent-secondary)]'
+              }`}
+            />
+            <span className={isPrimary ? 'text-[var(--text-primary)]' : 'text-[var(--text-secondary)]'}>
+              {phrase}
+            </span>
           </div>
         ))}
       </div>

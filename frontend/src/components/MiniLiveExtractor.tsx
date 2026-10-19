@@ -3,6 +3,8 @@ import { createInvestigation } from '../services/api';
 import type { Investigation, EvidenceItem } from '../types';
 import { Sparkles, AlertTriangle, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { SeverityChip } from './ui/SeverityChip';
+import { Button } from './ui/Button';
 
 const SAMPLE_PROMPTS = [
   {
@@ -50,7 +52,7 @@ export const MiniLiveExtractor: React.FC = () => {
   // Highlight matches in input text
   const renderHighlightedText = () => {
     if (!result || !result.evidence || result.evidence.length === 0) {
-      return <span>{inputText}</span>;
+      return <span className="text-[var(--text-primary)]">{inputText}</span>;
     }
 
     // Sort evidence by start_idx
@@ -59,7 +61,7 @@ export const MiniLiveExtractor: React.FC = () => {
       .sort((a, b) => (a.start_idx || 0) - (b.start_idx || 0));
 
     if (sortedSpans.length === 0) {
-      return <span>{inputText}</span>;
+      return <span className="text-[var(--text-primary)]">{inputText}</span>;
     }
 
     const elements: React.ReactNode[] = [];
@@ -71,7 +73,7 @@ export const MiniLiveExtractor: React.FC = () => {
 
       if (start > currentIdx) {
         elements.push(
-          <span key={`text-${currentIdx}`}>
+          <span key={`text-${currentIdx}`} className="text-[var(--text-primary)]">
             {inputText.slice(currentIdx, start)}
           </span>
         );
@@ -81,10 +83,10 @@ export const MiniLiveExtractor: React.FC = () => {
       elements.push(
         <mark
           key={`mark-${idx}`}
-          className={`px-1 py-0.5 rounded font-bold cursor-help transition-all ${
+          className={`px-1.5 py-0.5 rounded font-mono font-bold cursor-help transition-all ${
             isHigh
-              ? 'bg-[#A82020]/25 text-[#A82020] dark:bg-[#A82020]/40 dark:text-[#FBE6C2] border-b-2 border-[#A82020]'
-              : 'bg-[#B45309]/20 text-[#B45309] dark:bg-[#D97706]/30 dark:text-[#FBE6C2] border-b-2 border-[#B45309]'
+              ? 'bg-[#F87171]/20 text-[#F87171] border-b-2 border-[#F87171]'
+              : 'bg-[#FBBF24]/20 text-[#FBBF24] border-b-2 border-[#FBBF24]'
           }`}
           title={`${ev.type}: ${ev.explanation}`}
         >
@@ -97,7 +99,9 @@ export const MiniLiveExtractor: React.FC = () => {
 
     if (currentIdx < inputText.length) {
       elements.push(
-        <span key={`text-end`}>{inputText.slice(currentIdx)}</span>
+        <span key="text-end" className="text-[var(--text-primary)]">
+          {inputText.slice(currentIdx)}
+        </span>
       );
     }
 
@@ -105,18 +109,18 @@ export const MiniLiveExtractor: React.FC = () => {
   };
 
   return (
-    <div className="p-6 rounded-3xl border border-[#6C1A1A]/20 dark:border-[#A82020]/30 bg-[#FBE6C2]/30 dark:bg-[#2A0D0D]/40 space-y-5">
+    <div className="p-6 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface)] shadow-xl space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#A82020]" />
-          <h4 className="font-mono font-bold text-xs uppercase tracking-wider text-[#6C1A1A] dark:text-[#FBE6C2]">
-            Interactive Forensic Mini-Demo (Real Engine)
+          <Sparkles className="w-4 h-4 text-[var(--accent-primary)]" />
+          <h4 className="font-mono font-bold text-xs uppercase tracking-wider text-[var(--text-primary)]">
+            Live Forensic Dissector (Verified Backend Engine)
           </h4>
         </div>
 
         {/* Preset quick test chips */}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-mono text-[#7E3E3E] dark:text-[#C9B29B]">Presets:</span>
+          <span className="text-[10px] font-mono text-[var(--text-secondary)] uppercase">Presets:</span>
           {SAMPLE_PROMPTS.map((p, idx) => (
             <button
               key={idx}
@@ -126,8 +130,8 @@ export const MiniLiveExtractor: React.FC = () => {
               }}
               className={`text-[11px] px-2.5 py-1 rounded-lg border font-mono transition-all cursor-pointer ${
                 inputText === p.text
-                  ? 'bg-[#A82020] text-white border-[#A82020]'
-                  : 'border-[#6C1A1A]/20 dark:border-[#A82020]/30 hover:bg-[#FBE6C2] dark:hover:bg-[#3A1313]'
+                  ? 'bg-[var(--accent-primary)] text-[#080D18] border-[var(--accent-primary)] font-bold shadow-[0_0_10px_rgba(34,211,238,0.25)]'
+                  : 'bg-[var(--surface-elevated)] text-[var(--text-secondary)] border-[var(--border-subtle)] hover:text-[var(--text-primary)] hover:border-[var(--accent-primary)]/40'
               }`}
             >
               {p.label}
@@ -140,63 +144,60 @@ export const MiniLiveExtractor: React.FC = () => {
       <div className="relative">
         <textarea
           value={inputText}
-          onChange={(e) => {
-            setInputText(e.target.value);
-          }}
+          onChange={(e) => setInputText(e.target.value)}
           rows={3}
-          className="w-full p-3.5 rounded-xl border border-[#6C1A1A]/30 dark:border-[#A82020]/40 bg-[#F3E6D5] dark:bg-[#1A0707] text-[#2A0E0E] dark:text-[#F3E6D5] text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[#A82020]"
+          className="w-full p-3.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--background-secondary)] text-[var(--text-primary)] text-xs font-mono focus:outline-none focus:ring-2 focus:ring-[var(--accent-primary)] focus:border-transparent transition-all"
           placeholder="Paste suspicious text to test live extraction..."
         />
         <div className="flex justify-end mt-2">
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => runExtraction(inputText)}
-            disabled={loading}
-            className="px-4 py-1.5 rounded-xl bg-[#A82020] hover:bg-[#8C1919] text-[#F3E6D5] font-mono text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+            loading={loading}
           >
             {loading ? 'Dissecting...' : 'Run Forensic Dissection'}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Live Dissection Highlights */}
-      <div className="p-4 rounded-2xl bg-[#F3E6D5] dark:bg-[#1A0707] border border-[#6C1A1A]/20 dark:border-[#A82020]/20 space-y-3">
+      <div className="p-4 rounded-xl bg-[var(--background)] border border-[var(--border-subtle)] space-y-3">
         <div className="flex items-center justify-between text-[11px] font-mono">
-          <span className="font-bold uppercase tracking-wider text-[#7E3E3E] dark:text-[#C9B29B]">
-            Evidence Highlight View:
+          <span className="font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+            Evidence Span Isolation:
           </span>
           {result && (
             <div className="flex items-center gap-2">
-              <span className="font-bold">Risk Index:</span>
-              <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                result.risk_level === 'High concern'
-                  ? 'bg-red-500/20 text-red-600 dark:text-red-400'
-                  : 'bg-amber-500/20 text-amber-600 dark:text-amber-400'
-              }`}>
-                {result.risk_score.toFixed(1)}/100 ({result.risk_level})
-              </span>
+              <span className="text-[var(--text-secondary)]">Risk Index:</span>
+              <SeverityChip
+                level={result.risk_level}
+                score={result.risk_score}
+                size="sm"
+              />
             </div>
           )}
         </div>
 
         {error ? (
-          <div className="flex items-center gap-2 text-xs text-amber-600 dark:text-amber-400 p-2">
+          <div className="flex items-center gap-2 text-xs text-[#FBBF24] p-2 bg-[#FBBF24]/10 rounded-lg border border-[#FBBF24]/20">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span>{error}</span>
           </div>
         ) : (
-          <div className="text-xs font-mono leading-relaxed p-2 rounded-lg bg-black/5 dark:bg-white/5">
+          <div className="text-xs font-mono leading-relaxed p-3 rounded-lg bg-[var(--surface)] border border-[var(--border-subtle)]/50">
             {renderHighlightedText()}
           </div>
         )}
 
         {result && result.evidence.length > 0 && (
-          <div className="pt-2 border-t border-[#6C1A1A]/10 dark:border-[#A82020]/20 flex flex-wrap gap-2 text-[10px] font-mono">
+          <div className="pt-2 border-t border-[var(--border-subtle)] flex flex-wrap gap-2 text-[10px] font-mono">
             {result.evidence.map((ev, i) => (
               <span
                 key={i}
-                className="px-2 py-0.5 rounded-md bg-[#6C1A1A]/10 dark:bg-[#A82020]/20 text-[#6C1A1A] dark:text-[#FBE6C2]"
+                className="px-2 py-0.5 rounded-md bg-[var(--surface-elevated)] border border-[var(--border-subtle)] text-[var(--text-secondary)]"
               >
-                ● {ev.type}: "{ev.matched_text}"
+                ● <strong className="text-[var(--text-primary)]">{ev.type}</strong>: "{ev.matched_text}"
               </span>
             ))}
           </div>
@@ -207,7 +208,7 @@ export const MiniLiveExtractor: React.FC = () => {
       <div className="text-right">
         <Link
           to={`/investigate?text=${encodeURIComponent(inputText)}`}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#A82020] dark:text-[#FBE6C2] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[var(--accent-primary)] hover:underline cursor-pointer"
         >
           <span>Open in Full 3-Column Workspace</span>
           <ArrowRight className="w-3.5 h-3.5" />

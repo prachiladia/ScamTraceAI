@@ -9,7 +9,7 @@ export const PullMeHeroTape: React.FC = () => {
   const dragY = useMotionValue(0);
 
   // Transform drag distance into visual cues
-  const tapeWidth = useTransform(dragY, [0, 150], ['220px', '460px']);
+  const tapeWidth = useTransform(dragY, [0, 150], ['240px', '480px']);
   const tapeOpacity = useTransform(dragY, [0, 150], [0.95, 1]);
 
   const handlePullComplete = () => {
@@ -17,7 +17,7 @@ export const PullMeHeroTape: React.FC = () => {
     setTriggered(true);
     setTimeout(() => {
       navigate('/investigate');
-    }, 450);
+    }, 400);
   };
 
   return (
@@ -40,14 +40,14 @@ export const PullMeHeroTape: React.FC = () => {
           dragElastic={0.15}
           style={{ y: dragY, width: tapeWidth, opacity: tapeOpacity }}
           onDragEnd={(_, info) => {
-            if (info.offset.y > 90) {
+            if (info.offset.y > 85) {
               handlePullComplete();
             }
           }}
-          className={`relative z-20 py-3.5 px-6 rounded-2xl shadow-xl flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing border-2 border-[#6C1A1A] dark:border-[#A82020] transition-colors ${
+          className={`relative z-20 py-3.5 px-6 rounded-2xl shadow-xl flex items-center justify-between gap-3 cursor-grab active:cursor-grabbing border-2 transition-all ${
             triggered
-              ? 'bg-[#1E6E60] text-white'
-              : 'bg-[#A82020] text-[#F3E6D5] hover:bg-[#8C1919]'
+              ? 'bg-[var(--accent-secondary)] text-[#080D18] border-[var(--accent-secondary)] shadow-[0_0_25px_rgba(45,212,191,0.4)]'
+              : 'bg-[var(--surface-elevated)] text-[var(--accent-primary)] border-[var(--accent-primary)]/50 hover:border-[var(--accent-primary)] shadow-[0_0_20px_rgba(34,211,238,0.18)]'
           }`}
           role="button"
           tabIndex={0}
@@ -60,39 +60,39 @@ export const PullMeHeroTape: React.FC = () => {
           aria-label="Draggable evidence tape: Pull down or press Enter to launch investigation"
         >
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FBE6C2] animate-ping" />
-            <span className="font-mono font-black text-xs uppercase tracking-wider">
-              {triggered ? 'UNCOVERING EVIDENCE...' : 'PULL TO UNCOVER EVIDENCE'}
+            <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent-primary)] animate-ping" />
+            <span className="font-mono font-bold text-xs uppercase tracking-wider">
+              {triggered ? 'DECONSTRUCTING EVIDENCE...' : 'PULL TO UNCOVER EVIDENCE'}
             </span>
           </div>
 
-          <div className="flex items-center gap-1.5 font-mono text-[11px] bg-black/25 px-2.5 py-1 rounded-lg">
+          <div className="flex items-center gap-1.5 font-mono text-[11px] bg-black/40 px-2.5 py-1 rounded-lg text-[var(--text-primary)]">
             {triggered ? (
-              <Sparkles className="w-3.5 h-3.5 animate-spin" />
+              <Sparkles className="w-3.5 h-3.5 animate-spin text-[#080D18]" />
             ) : (
               <>
-                <span>DRAG</span>
-                <ArrowDown className="w-3.5 h-3.5 animate-bounce" />
+                <span className="text-xs">DRAG</span>
+                <ArrowDown className="w-3.5 h-3.5 animate-bounce text-[var(--accent-primary)]" />
               </>
             )}
           </div>
         </motion.div>
 
         {/* Trail / Tape Unroll Slot */}
-        <div className="w-56 h-24 -mt-3 pt-3 border-x-2 border-b-2 border-dashed border-[#6C1A1A]/30 dark:border-[#A82020]/40 rounded-b-2xl bg-[#FBE6C2]/20 dark:bg-[#2A0D0D]/30 flex flex-col items-center justify-end pb-3 text-center pointer-events-none">
-          <span className="text-[10px] font-mono uppercase tracking-widest text-[#7E3E3E] dark:text-[#C9B29B]">
-            Pull down past mark to dissect
+        <div className="w-60 h-24 -mt-3 pt-3 border-x-2 border-b-2 border-dashed border-[var(--border-subtle)] rounded-b-2xl bg-[var(--surface)]/30 flex flex-col items-center justify-end pb-3 text-center pointer-events-none">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-[var(--text-secondary)]">
+            Drag down to initialize telemetry
           </span>
-          <div className="w-12 h-1 bg-[#A82020]/40 rounded-full mt-1.5" />
+          <div className="w-12 h-1 bg-[var(--accent-primary)]/40 rounded-full mt-1.5" />
         </div>
       </div>
 
       {/* Accessible direct action button below */}
       <button
         onClick={handlePullComplete}
-        className="mt-3 text-xs text-[#6C1A1A] dark:text-[#FBE6C2] underline decoration-dotted hover:text-[#A82020] font-mono cursor-pointer"
+        className="mt-3 text-xs text-[var(--text-secondary)] hover:text-[var(--accent-primary)] underline decoration-dotted font-mono cursor-pointer transition-colors"
       >
-        or press here to launch investigation workspace directly →
+        or click here to open investigation workspace directly →
       </button>
     </div>
   );

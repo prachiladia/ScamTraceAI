@@ -42,12 +42,12 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div
             key={toast.id}
             role="status"
-            className={`pointer-events-auto flex items-center justify-between p-4 rounded-xl shadow-xl border text-sm font-medium transition-all transform animate-in fade-in slide-in-from-bottom-3 duration-200 ${
+            className={`pointer-events-auto flex items-center justify-between p-4 rounded-xl shadow-2xl border text-sm font-medium transition-all transform animate-in fade-in slide-in-from-bottom-3 duration-200 ${
               toast.type === 'success'
-                ? 'bg-[#1E6E60] border-emerald-400 text-white'
+                ? 'bg-[#101827] border-emerald-500/60 text-[#F1F5F9] shadow-[0_0_15px_rgba(16,185,129,0.2)]'
                 : toast.type === 'error'
-                ? 'bg-[#A82020] border-red-400 text-white'
-                : 'bg-[#2A0D0D] border-[#6C1A1A] text-[#F3E6D5]'
+                ? 'bg-[#101827] border-red-500/60 text-[#F1F5F9] shadow-[0_0_15px_rgba(248,113,113,0.25)]'
+                : 'bg-[#101827] border-[#22D3EE]/60 text-[#F1F5F9] shadow-[0_0_15px_rgba(34,211,238,0.2)]'
             }`}
           >
             <div className="flex items-center gap-3">
